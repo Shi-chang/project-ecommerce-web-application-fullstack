@@ -1,0 +1,41 @@
+{
+  "name": "ecommerce-project",
+  "version": "1.0.0",
+  "description": "e-commerce website using MERN stack",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon backend/server.js",
+    "dev": "SET NODE_ENV=DEVELOPMENT& nodemon backend/server",
+    "pro": "SET NODE_ENV=PRODUCTION& nodemon backend/server",
+    "seeder": "node backend/utils/seeder.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NEU-CS5610-2022-02-VAN/assignment-3-ye.git"
+  },
+  "author": "Shichang Ye",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NEU-CS5610-2022-02-VAN/assignment-3-ye/issues"
+  },
+  "homepage": "https://github.com/NEU-CS5610-2022-02-VAN/assignment-3-ye#readme",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.8.5",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.0",
+    "cloudinary": "^1.30.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.5.1",
+    "nodemailer": "^6.7.8",
+    "react-redux": "^8.0.2",
+    "react-toastify": "^9.0.8",
+    "validator": "^13.7.0"
+  }
+}
