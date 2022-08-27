@@ -1,44 +1,42 @@
 import {
-    PRODUCTS_REQUEST,
-    PRODUCTS_SUCCESS,
-    PRODUCTS_FAIL,
-    PRODUCTS_CLEAR_ERRORS,
-} from '../reducers/productsSlice.js';
+    requestProductDetails,
+    requestProductDetailsSuccess,
+    requestProductDetailsFail
+} from '../reducers/productDetailsSlice';
 import {
-    PRODUCT_DETAILS_REQUEST,
-    PRODUCT_DETAILS_SUCCESS,
-    PRODUCT_DETAILS_FAIL
-} from '../reducers/productDetailSlice.js';
+    requestAllProducts,
+    requestProductsSuccess,
+    requestProductsFail
+} from '../reducers/productsSlice.js';
+import PORT from '../components/route/routeConstants';
 
+// Gets all products.
 export const getProducts = (keyword = '', currentPage = 1, price) => async (dispatch) => {
     try {
-        dispatch(PRODUCTS_REQUEST());
-        const url = `http://localhost:4000/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}`;
+        dispatch(requestAllProducts());
+        // Sets the url with query key and value pairs
+        const url = `${PORT}/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}`;
         const res = await fetch(url);
         if (res.ok) {
             const data = await res.json();
-            dispatch(PRODUCTS_SUCCESS(data));
+            dispatch(requestProductsSuccess(data));
         }
     } catch (error) {
-        dispatch(PRODUCTS_FAIL(error.message));
+        dispatch(requestProductsFail(error.message));
     }
 };
 
-export const clearErrors = () => async (dispatch) => {
-    dispatch(PRODUCTS_CLEAR_ERRORS());
-};
-
+// Gets the details of a product.
 export const getProductDetails = (id) => async (dispatch) => {
     try {
-        dispatch(PRODUCT_DETAILS_REQUEST());
-        const url = `http://localhost:4000/api/v1/product/${id}`;
+        dispatch(requestProductDetails());
+        const url = `${PORT}/product/${id}`;
         const res = await fetch(url);
         if (res.ok) {
             const data = await res.json();
-            console.dir(data);
-            dispatch(PRODUCT_DETAILS_SUCCESS(data.product));
+            dispatch(requestProductDetailsSuccess(data.product));
         }
     } catch (error) {
-        dispatch(PRODUCT_DETAILS_FAIL(error.message));
+        dispatch(requestProductDetailsFail(error.message));
     }
 };

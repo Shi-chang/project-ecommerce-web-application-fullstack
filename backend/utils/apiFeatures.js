@@ -1,9 +1,11 @@
+
+// This feature class provides 3 methods for searching, filtering and pagination functions.
 class APIFeatures {
     constructor(query, queryStr) {
         this.query = query;
         this.queryStr = queryStr;
     }
-
+    // The search function that searches the products based on the keyword.
     search() {
         const keyword = this.queryStr.keyword ? {
             name: {
@@ -15,6 +17,7 @@ class APIFeatures {
         return this;
     }
 
+    // The filter function that filters the products based on the price and ratings.
     filter() {
         const queryCopy = { ...this.queryStr };
         // delete unnecessary fields from query string
@@ -29,6 +32,7 @@ class APIFeatures {
         return this;
     }
 
+    // The pagination function that returns the products on the specified page.
     pagination(resPerPage) {
         const currentPage = Number(this.queryStr.page) || 1;
         const skipDocuments = resPerPage * (currentPage - 1);

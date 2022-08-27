@@ -4,6 +4,7 @@ import MetaData from '../layout/MetaData.js';
 import { addItemToCart, removeItemFromCart } from '../../actions/cartActions.js';
 import { useDispatch, useSelector } from 'react-redux';
 
+// The Cart component that handles CRUD operations of the shopping cart.
 const Cart = () => {
     const dispatch = useDispatch();
 

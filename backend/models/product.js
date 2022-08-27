@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+// The product shema includes name, price, description, category, images, seller, stock, number 
+// of reviews, ratings, reviews and created time.
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -93,5 +95,4 @@ const productSchema = new mongoose.Schema({
 });
 
 const Product = mongoose.model('Product', productSchema);
-
 export default Product;

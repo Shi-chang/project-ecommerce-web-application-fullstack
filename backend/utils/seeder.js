@@ -3,12 +3,14 @@ import products from "../data/products.json" assert{type: 'json'};
 import dotenv from 'dotenv';
 import connectDatabase from '../config/database.js';
 
-// Configures the environment path and connects to the database
+// This is a seeder document that constructs the initial available products in the database.
+
+// Configures the environment path and connects to the database.
 dotenv.config({ path: 'backend/config/config.env' });
 connectDatabase();
 
-// Deletes current products from the databse and creates new ones based 
-// on "../data/products.json"
+// Deletes current products from the databse and creates new ones based on products stored in
+// "../data/products.json".
 const seedProducts = async () => {
     try {
         // clear existing products
@@ -24,7 +26,5 @@ const seedProducts = async () => {
         process.exit(1);
     }
 }
-
-console.log("111111111111");
 
 seedProducts();

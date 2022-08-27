@@ -1,5 +1,8 @@
 import nodemailer from 'nodemailer';
 
+// This component sends an email to the specified address for reseting the password.
+// Due to time limitation, this function is not implemented yet.
+
 const sendEmail = async (options) => {
     var transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,

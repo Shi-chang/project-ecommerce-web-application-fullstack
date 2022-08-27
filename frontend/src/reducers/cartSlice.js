@@ -1,12 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// The cart reducer and its actions.
 export const cartSlice = createSlice({
     name: 'cart',
     initialState: {
         cartItems: []
     },
     reducers: {
-        ADD_TO_CART: (state, action) => {
+        addToCart: (state, action) => {
             const item = action.payload;
             const itemExists = state.cartItems.find(e => e.product === item.product);
             if (itemExists) {
@@ -15,13 +16,12 @@ export const cartSlice = createSlice({
                 state.cartItems = [...state.cartItems, item];
             }
         },
-        REMOVE_FROM_CART: (state, action) => {
+        removeFromCart: (state, action) => {
             state.cartItems = state.cartItems.filter(i => i.product !== action.payload);
         }
     },
 })
 
-// Action creators are generated for each case reducer function
-export const { ADD_TO_CART, REMOVE_FROM_CART } = cartSlice.actions
+export const { addToCart, removeFromCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

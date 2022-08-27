@@ -1,5 +1,5 @@
 import express from 'express';
-import { isAuthenticatedUser, authorizedRoles } from '../middlewares/auth.js';
+import { isAuthenticatedUser, authorizedRoles } from '../middlewares/authentication.js';
 import {
     createOrder,
     getSingleOrder,
@@ -9,8 +9,8 @@ import {
     deleteOrder
 } from '../controller/orderController.js';
 
+// Different routes for order related operations.
 const router = express.Router();
-
 router.route('/order/create').post(isAuthenticatedUser, createOrder);
 router.route('/order/:id').get(isAuthenticatedUser, getSingleOrder);
 router.route('/orders/me').get(isAuthenticatedUser, getMyOrders);

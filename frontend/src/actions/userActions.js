@@ -1,42 +1,61 @@
-import {
-    LOGIN_REQUEST,
-    LOGIN_SUCCESS,
-    LOGIN_FAIL,
-    REGISTER_USER_REQUEST,
-    REGISTER_USER_SUCCESS,
-    REGISTER_USER_FAIL,
-    LOAD_USER_REQUEST,
-    LOAD_USER_SUCCESS,
-    LOAD_USER_FAIL,
-    LOGOUT_SUCCESS,
-    LOGOUT_FAIL,
-    CLEAR_USER_ERRORS
-} from '../reducers/userSlice.js';
 import axios from 'axios';
+import {
+    requestLoginUser,
+    requestRegisterUser,
+    requestLoadUser,
+    registerUserSuccess,
+    loginUserSuccess,
+    loadUserSuccess,
+    logoutUserFail,
+    registerUserFail,
+    loginUserFail,
+    loadUserFail,
+    logoutUserSuccess
+} from '../reducers/userAuthenticationSlice';
+import {
+    requestUpdateProfile,
+    requestUpdatePassword,
+    requestUpdateUser,
+    requestDeleteUser,
+    updateProfileSuccess,
+    updatePasswordSuccess,
+    updateUserSuccess,
+    updateProfileFail,
+    updatePasswordFail,
+    updateUserFail,
+    clearUserUpdateErrors
+} from '../reducers/userUpdateSlice';
+import PORT from '../components/route/routeConstants';
 
-// Login user
+// Logs in user by sending the email and password information to the server. If the user
+// is successfully logged in, a token sent back by the server will be stored in the
+// browser cookies. To get and store the token, it is necessary to put 
+//'withCredentials: true'(axios) or 'credentials: include'(fetch) in the request.
 export const login = (email, password) => async (dispatch) => {
     try {
-        dispatch(LOGIN_REQUEST())
+        dispatch(requestLoginUser())
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             },
             withCredentials: true
         }
-        const url = 'http://localhost:4000/api/v1/login';
-        const { data } = await axios.post(url, { email, password }, config)
-        dispatch(LOGIN_SUCCESS(data.user));
+        const url = `${PORT}/login`;
+        const { data } = await axios.post(url, { email, password }, config);
+        dispatch(loginUserSuccess(data.user));
     } catch (error) {
-        dispatch(LOGIN_FAIL(error.message));
+        dispatch(loginUserFail(error.response.data.message));
     }
 }
 
-// Register user
+// Register a new user by sending the filled out form data to the server. If the user
+// is successfully registerred. A token sent back by the server will be stored in the
+// browser cookies. To get and store the token, it is necessary to put 
+//'withCredentials: true'(axios) or 'credentials: include'(fetch) in the request.
 export const register = (formData) => async (dispatch) => {
     try {
-        dispatch(REGISTER_USER_REQUEST());
-        const url = `http://localhost:4000/api/v1/register`;
+        dispatch(requestRegisterUser());
+        const url = `${PORT}/register`;
         const res = await fetch(url, {
             method: 'POST',
             headers: {
@@ -47,44 +66,54 @@ export const register = (formData) => async (dispatch) => {
         });
         if (res.ok) {
             const data = await res.json();
-            dispatch(REGISTER_USER_SUCCESS(data.user));
+            dispatch(registerUserSuccess(data.user));
         }
     } catch (error) {
-        console.dir(error);
-        dispatch(REGISTER_USER_FAIL(error.message));
+        dispatch(registerUserFail(error.message));
     }
 }
 
-// Load user
+// Loads the user by sending the token stored in the cookies to the server for authentication.
 export const loadUser = () => async (dispatch) => {
     try {
-        dispatch(LOAD_USER_REQUEST());
+        dispatch(requestLoadUser());
         const config = {
             withCredentials: true
         }
-        const url = `http://localhost:4000/api/v1/me`;
+        const url = `${PORT}/me`;
         const { data } = await axios.get(url, config);
-        dispatch(LOAD_USER_SUCCESS(data.user));
+        dispatch(loadUserSuccess(data.user));
     } catch (error) {
-        dispatch(LOAD_USER_FAIL(error.message));
+        dispatch(loadUserFail(error.response.data.message));
     }
 }
 
-// Logout user
+// Logs out the user and sets the token stored in the local cookies to null.
 export const logout = () => async (dispatch) => {
     try {
         const config = {
             withCredentials: true
         }
-        const url = `http://localhost:4000/api/v1/logout`;
+        const url = `${PORT}/logout`;
         const { data } = await axios.get(url, config);
-        console.dir(data);
-        dispatch(LOGOUT_SUCCESS());
+        dispatch(logoutUserSuccess());
     } catch (error) {
-        dispatch(LOGOUT_FAIL(error.message));
+        dispatch(logoutUserFail(error.response.data.message));
     }
 }
 
-export const clearErrors = () => async (dispatch) => {
-    dispatch(CLEAR_USER_ERRORS());
-};
+// Update user profile.
+export const updateProfile = (userData) => async (dispatch) => {
+    try {
+        dispatch(requestUpdateProfile());
+        const config = {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+        }
+        const url = `${PORT}/me/update`;
+        const { data } = await axios.put(url, userData, config);
+        dispatch(updateProfileSuccess(data.success));
+    } catch (error) {
+        dispatch(updateProfileFail(error.response.data.message));
+    }
+}

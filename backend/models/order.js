@@ -1,32 +1,13 @@
 import mongoose from "mongoose";
 
+// The order schema includes user, shipping information, order items, payment information,
+// payment time, item price, tax price, shipping price, total price, order status, delivery time
+// and order created time.
 const orderSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"
-    },
-    shippingInfo: {
-        country: {
-            type: String,
-            required: true
-        },
-        city: {
-            type: String,
-            required: true
-        },
-        address: {
-            type: String,
-            required: true
-        },
-        postCode: {
-            type: String,
-            required: true
-        },
-        phoneNumber: {
-            type: String,
-            required: true
-        }
     },
     orderItems: [
         {
@@ -53,6 +34,40 @@ const orderSchema = mongoose.Schema({
             }
         }
     ],
+    taxPrice: {
+        type: Number,
+        required: true
+    },
+    shippingPrice: {
+        type: Number,
+        required: true
+    },
+    totalPrice: {
+        type: Number,
+        required: true
+    },
+    shippingInfo: {
+        country: {
+            type: String,
+            required: true
+        },
+        city: {
+            type: String,
+            required: true
+        },
+        address: {
+            type: String,
+            required: true
+        },
+        postCode: {
+            type: String,
+            required: true
+        },
+        phoneNumber: {
+            type: String,
+            required: true
+        }
+    },
     paymentInfo: {
         id: {
             type: String
@@ -65,18 +80,6 @@ const orderSchema = mongoose.Schema({
         type: Date
     },
     itemPrice: {
-        type: Number,
-        required: true
-    },
-    taxPrice: {
-        type: Number,
-        required: true
-    },
-    shippingPrice: {
-        type: Number,
-        required: true
-    },
-    totalPrice: {
         type: Number,
         required: true
     },
@@ -95,5 +98,4 @@ const orderSchema = mongoose.Schema({
 });
 
 const Order = mongoose.model('Order', orderSchema);
-
 export default Order;

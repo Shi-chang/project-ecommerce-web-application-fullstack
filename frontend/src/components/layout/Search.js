@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// The search component in the header
+// The search component in the header.
 const Search = () => {
-    const [keyword, setKeyword] = useState('');
     const navigate = useNavigate();
-
+    const [keyword, setKeyword] = useState("");
     const handleSearch = (e) => {
         e.preventDefault();
+
         // If the keyword is not empty, do the search; otherwise, go to the home page.
         if (keyword.trim()) {
             navigate(`/search/${keyword}`);
         } else {
-            navigate('/');//*********** */
+            navigate('/');
         }
     }
 

@@ -1,14 +1,13 @@
-import {
-    ADD_TO_CART,
-    REMOVE_FROM_CART
-} from '../reducers/cartSlice.js';
 import axios from 'axios';
+import { addToCart, removeFromCart } from '../reducers/cartSlice.js';
+import PORT from '../components/route/routeConstants.js';
 
+// Adds an item to the cart.
 export const addItemToCart = (id, quantity) => async (dispatch, getState) => {
-    const url = `http://localhost:4000/api/v1/product/${id}`;
+    const url = `${PORT}/product/${id}`;
     const { data } = await axios.get(url);
 
-    dispatch(ADD_TO_CART({
+    dispatch(addToCart({
         product: data.product._id,
         name: data.product.name,
         price: data.product.price,
@@ -20,8 +19,9 @@ export const addItemToCart = (id, quantity) => async (dispatch, getState) => {
     localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
 }
 
+// Removes an item from the cart.
 export const removeItemFromCart = (id) => async (dispatch, getState) => {
-    dispatch(REMOVE_FROM_CART(id));
+    dispatch(removeFromCart(id));
 
     localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
 }

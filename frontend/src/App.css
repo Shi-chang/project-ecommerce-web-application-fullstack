@@ -140,6 +140,16 @@ body {
   padding-right: 0.5em;
 }
 
+.btn-weather {
+  height: 3em;
+}
+
+.modal-weather {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
 .card-img-top {
   width: 200px;
   height: 150px;
@@ -357,32 +367,6 @@ body {
   border-color: #fab65d;
 }
 
-/* Confirm Order */
-.order-confirm p,
-.order-details p {
-  margin-left: 1.5rem;
-}
-
-.avatar {
-  display: inline-block;
-  margin-bottom: 0;
-  height: 3rem;
-  width: 3rem;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-}
-
-.update-btn {
-  background-color: #fab65d;
-  border-color: #fab65d;
-  color: white;
-}
-
-.update-btn:hover {
-  color: white;
-}
-
 /* Pagination */
 .page-item.active .page-link {
   background-color: #fab65d;
@@ -395,11 +379,6 @@ body {
 
 .page-link:hover {
   color: #fab65d;
-}
-
-/* Dashboard */
-.card-font-size {
-  font-size: 1.5rem;
 }
 
 /* Reviews */

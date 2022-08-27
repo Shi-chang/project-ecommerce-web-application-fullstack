@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getProductDetails, clearErrors } from '../../actions/productActions.js';
+import { Carousel, CarouselItem } from 'react-bootstrap';
+import { getProductDetails } from '../../actions/productActions.js';
+import { clearProductDetailsErrors } from '../../reducers/productDetailsSlice';
 import Loader from '../layout/Loader.js';
 import MetaData from '../layout/MetaData.js';
-import { useParams } from 'react-router-dom';
-import { Carousel, CarouselItem } from 'react-bootstrap';
 import { addItemToCart } from '../../actions/cartActions.js';
 
+// The prodcut details page.
 const ProductDetails = () => {
-
     const dispatch = useDispatch();
     const params = useParams();
-
     const [quantity, setQuantity] = useState(1);
-
     const { user } = useSelector(state => state.user);
     const { loading, product, error } = useSelector(state => state.productDetails);
     useEffect(() => {
         dispatch(getProductDetails(params.id));
         if (error) {
             alert(error);
-            dispatch(clearErrors());
+            dispatch(clearProductDetailsErrors());
             return;
         }
 
     }, [dispatch, error, params.id]);
 
+    // Handles the increase quantity click event.
     const increaseQuantity = () => {
         const count = document.querySelector('.count');
         if (count.valueAsNumber >= product.stock) {
@@ -35,6 +35,7 @@ const ProductDetails = () => {
         setQuantity(quantity);
     }
 
+    // Handles the decrease quantity click event.
     const decreaseQuantity = () => {
         const count = document.querySelector('.count');
         if (count.valueAsNumber <= 1) {
@@ -44,12 +45,12 @@ const ProductDetails = () => {
         setQuantity(quantity);
     }
 
+    // Handles the add item to cart event.
     const addToCart = () => {
         if (!user) {
             alert("Please login first.");
             return;
         }
-
         dispatch(addItemToCart(params.id, quantity));
         alert("The product has been added to your cart.");
     }
@@ -72,41 +73,29 @@ const ProductDetails = () => {
                                 }
                             </Carousel>
                         </div>
-
                         <div className="col-12 col-lg-5 mt-5">
                             <h3>{product.name}</h3>
                             <p id="product-id">{`Product ID: ${product._id}`}</p>
-
                             <hr />
-
                             <div className="rating-outer">
                                 <div className="rating-inner" style={{ width: `${(product.ratings / 5) * 100}%` }}></div>
                             </div>
                             <span id="no-of-reviews">({product.numberOfReviews} reviews)</span>
-
                             <hr />
-
                             <p id="product_price">${product.price}</p>
                             <div className="stockCounter d-inline">
                                 <span className="btn btn-danger minus" onClick={decreaseQuantity}>-</span>
-
                                 <input type="number" className="form-control count d-inline" value={quantity} readOnly />
-
                                 <span className="btn btn-primary plus" onClick={increaseQuantity}>+</span>
                             </div>
                             <button type="button" id="cart-btn" className="btn btn-primary d-inline ml-4" onClick={addToCart} disabled={product.stock === 0}>Add to Cart</button>
-
                             <hr />
-
                             <p>Status: <span id="stock-status" className={product.stock > 0 ? 'greenColor' : 'redColor'}>{product.stock > 0 ? 'In Stock' : 'Out of Stock'}</span></p>
-
                             <hr />
-
                             <h4 className="mt-2">Description:</h4>
                             <p>{product.description}</p>
                             <hr />
                             <p id="product_seller mb-3">Sold by: <strong>{product.seller}</strong></p>
-
                             <button id="review-btn" type="button" className="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#ratingModal">
                                 Submit My Review
                             </button>
@@ -128,7 +117,6 @@ const ProductDetails = () => {
                                                         <li className="star"><i className="fa fa-star"></i></li>
                                                         <li className="star"><i className="fa fa-star"></i></li>
                                                     </ul>
-
                                                     <textarea name="review" id="review" className="form-control mt-3">
                                                     </textarea>
                                                     <button className="btn my-3 float-right review-btn px-4 text-white" data-bs-dismiss="modal" aria-label="Close">Submit</button>
@@ -144,7 +132,6 @@ const ProductDetails = () => {
             )
             }
         </>
-
     )
 }
 

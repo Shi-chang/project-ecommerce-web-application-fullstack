@@ -9,8 +9,9 @@ import {
     getReviews,
     deleteReview
 } from "../controller/productController.js";
-import { isAuthenticatedUser, authorizedRoles } from "../middlewares/auth.js";
+import { isAuthenticatedUser, authorizedRoles } from "../middlewares/authentication.js";
 
+// Different routes for product related operations.
 const router = express.Router();
 router.route('/products').get(getProducts);
 router.route('/product/:id').get(getSingleProduct);
@@ -22,6 +23,5 @@ router.route('/review')
     .put(isAuthenticatedUser, createReview)
     .delete(isAuthenticatedUser, deleteReview);
 router.route('/reviews').get(getReviews);
-
 
 export default router;

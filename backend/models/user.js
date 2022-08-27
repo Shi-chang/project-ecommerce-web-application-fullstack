@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
+// The user schema includes name, email, password, avatar, role('user' or 'admin') and
+// created time.
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -44,7 +46,7 @@ const userSchema = mongoose.Schema({
     resetPasswordExpires: Date
 });
 
-// Encrypt password before saving
+// Encrypts user password before saving, so that the original password is protected.
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         next();
@@ -52,12 +54,13 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
 });
 
-// Compare user password
+// Self-defined instance method that compares if encryption of the user input password 
+// matches the stored encrypted password.
 userSchema.methods.comparePassword = async function (passwordEntered) {
     return await bcrypt.compare(passwordEntered, this.password);
 };
 
-// Return the JWT token
+// Self-defined instance method that returns the JWT token.
 userSchema.methods.getJwtToken = function () {
     return jwt.sign(
         { id: this.id },
@@ -67,19 +70,17 @@ userSchema.methods.getJwtToken = function () {
         });
 }
 
-// Create password reset token
+// Self-defined instance method that creates password reset token.
 userSchema.methods.getPasswordResetToken = function () {
-    // Create random bytes and hash it as password token
+    // Create random bytes and hash it as password token.
     const resetToken = crypto.randomBytes(30).toString('hex');
     this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-    // Set expiry time(15 minutes) for the token
+    // Set expiry time(15 minutes) for the token.
     this.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
-
+    console.log("");
     return resetToken;
 }
 
-
 const User = mongoose.model('User', userSchema);
-
 export default User;

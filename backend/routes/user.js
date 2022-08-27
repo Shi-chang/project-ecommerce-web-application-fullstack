@@ -13,10 +13,10 @@ import {
     updateUser,
     deleteUser
 } from '../controller/userController.js';
-import { isAuthenticatedUser, authorizedRoles } from '../middlewares/auth.js';
+import { isAuthenticatedUser, authorizedRoles } from '../middlewares/authentication.js';
 
+// Different routes for user related operations.
 const router = express.Router();
-
 router.route('/register').post(registerUser);
 router.route('/login').post(loginUser);
 router.route('/logout').get(logoutUser);
