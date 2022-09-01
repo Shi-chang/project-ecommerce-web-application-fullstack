@@ -15,6 +15,7 @@ export const productsSlice = createSlice({
             state.loading = false;
             state.products = action.payload.products;
             state.productsCount = action.payload.productsCount;
+            state.filteredProductsCount = action.payload.filteredProductsCount;
             state.resPerPage = action.payload.resPerPage;
         },
         requestProductsFail: (state, action) => {

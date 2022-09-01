@@ -16,6 +16,7 @@ const errorMiddleWare = (err, req, res, next) => {
             errMessage: err.message,
             stack: err.stack
         });
+        console.log(err.stack);
     }
 
     // Sets up error response when in production mode.

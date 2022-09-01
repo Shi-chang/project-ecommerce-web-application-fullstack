@@ -9,12 +9,14 @@ import APIFeatures from '../utils/apiFeatures.js';
 export const getProducts = catchAsyncErrors(async (req, res, next) => {
     const resPerPage = 8;
     const productsCount = await Product.countDocuments();
+
     const apiFeatures = new APIFeatures(Product.find(), req.query)
         .search()
         .filter()
 
-    const products = await apiFeatures.query;
-    const filteredProductsCount = products.length;
+    let products = await apiFeatures.query;
+    let filteredProductsCount = products.length;
+
     apiFeatures.pagination(resPerPage);
     products = await apiFeatures.query.clone();
 

@@ -11,11 +11,16 @@ import {
 import PORT from '../components/route/routeConstants';
 
 // Gets all products.
-export const getProducts = (keyword = '', currentPage = 1, price) => async (dispatch) => {
+export const getProducts = (keyword = '', currentPage = 1, price, category, rating = 0) => async (dispatch) => {
     try {
         dispatch(requestAllProducts());
-        // Sets the url with query key and value pairs
-        const url = `${PORT}/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}`;
+
+        // Sets the url with key and value pairs from the query string
+        let url = `${PORT}/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${rating}`;
+        if (category) {
+            url = `${PORT}/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${rating}`
+        }
+
         const res = await fetch(url);
         if (res.ok) {
             const data = await res.json();

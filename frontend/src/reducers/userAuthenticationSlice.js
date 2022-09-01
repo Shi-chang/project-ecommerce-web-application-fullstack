@@ -66,17 +66,22 @@ export const userAuthenticationSlice = createSlice({
     },
 })
 
-export const { requestLoginUser,
+export const {
+    requestLoginUser,
     requestRegisterUser,
     requestLoadUser,
-    registerUserSuccess,
+
     loginUserSuccess,
+    registerUserSuccess,
     loadUserSuccess,
+    
+    logoutUserSuccess,
+
     logoutUserFail,
     registerUserFail,
     loginUserFail,
     loadUserFail,
-    logoutUserSuccess,
+
     clearUserAuthenticationErrors } = userAuthenticationSlice.actions;
 
 export default userAuthenticationSlice.reducer;

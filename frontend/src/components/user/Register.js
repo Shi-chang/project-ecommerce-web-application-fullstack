@@ -13,6 +13,9 @@ const Register = () => {
         password: '',
     });
     const { name, email, password } = user;
+    const [avatar, setAvatar] = useState('');
+    const [avatarPreview, setAvatarPreview] = useState('images/default_avatar.jpg');
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { loading, isAuthenticated, error } = useSelector(state => state.user);
