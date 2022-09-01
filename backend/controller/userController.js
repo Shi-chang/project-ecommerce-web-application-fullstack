@@ -5,11 +5,18 @@ import catchAsyncError from '../middlewares/catchAsyncErrors.js';
 import sendToken from '../utils/jwtToken.js';
 import catchAsyncErrors from '../middlewares/catchAsyncErrors.js';
 import sendEmail from '../utils/sendEmails.js';
+import cloudinary from 'cloudinary';
 
 // This user controller controles the CRUD operations of users.
 
 // Registers a new user (/register).
 export const registerUser = catchAsyncError(async (req, res, next) => {
+    const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        folder: 'avatars',
+        width: 150,
+        crop: "scale"
+    });
+
     const { name, email, password } = req.body;
     // If the user already exists, throw an error.
     let user = await User.findOne({ email });
@@ -23,8 +30,8 @@ export const registerUser = catchAsyncError(async (req, res, next) => {
         password,
         // This avatar is temporary. I will update it later using third party image management app licke cloudinary.
         avatar: {
-            public_id: 'MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto',
-            url: 'https://thumbs.dreamstime.com/z/vector-illustration-isolated-white-background-user-profile-avatar-black-line-icon-user-profile-avatar-black-solid-icon-121102166.jpg'
+            public_id: result.public_id,
+            url: result.secure_url
         }
     });
 

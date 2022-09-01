@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import cloudinary from 'cloudinary';
 import productsRoutes from './routes/product.js';
 import userRoutes from './routes/user.js';
 import orderRoutes from './routes/order.js';
@@ -28,7 +29,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(fileUpload());
 
-// middleware that handles different routes. The products and user routes are mostly accomplished both
+// Sets up configuration for cloudinary.
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Middleware that handles different routes. The products and user routes are mostly accomplished both
 // in the front end and back end. But the order fuction is not finished yet in the front end.
 app.use(productsRoutes);
 app.use(userRoutes);
