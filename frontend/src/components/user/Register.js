@@ -8,13 +8,14 @@ import { clearUserAuthenticationErrors } from '../../reducers/userAuthentication
 // The Register component that handles the registration process.
 const Register = () => {
     const [user, setUser] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
     });
-    const { name, email, password } = user;
-    const [avatar, setAvatar] = useState('');
-    const [avatarPreview, setAvatarPreview] = useState('/default-avatar.jpg');
+    const { firstName, lastName, email, password } = user;
+    const [avatar, setAvatar] = useState();
+    const [avatarPreview, setAvatarPreview] = useState('/images/default-avatar.jpg');
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -35,6 +36,8 @@ const Register = () => {
     // Handles the submit event.
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const name = `${firstName} ${lastName}`;
 
         const formData = { name, email, password, avatar };
         dispatch(register(formData));
@@ -63,19 +66,31 @@ const Register = () => {
                 <MetaData title="Register" />
                 <div className="col-10 col-lg-5">
                     <form className="shadow-lg" onSubmit={handleSubmit}>
-                        <h1 className="mb-3">Register</h1>
+                        <h2 className="mb-3 text-center">Register</h2>
                         <div className="form-group">
-                            <label htmlFor="name-field">Name</label>
+                            <label htmlFor="name-field">First Name</label>
                             <input
                                 type="name"
-                                id="name-field"
+                                id="name-field1"
                                 className="form-control"
-                                name='name'
-                                value={name}
+                                name='firstName'
+                                value={firstName}
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mt-3">
+                            <label htmlFor="name-field">Last Name</label>
+                            <input
+                                type="name"
+                                id="name-field2"
+
+                                className="form-control"
+                                name='lastName'
+                                value={lastName}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group mt-3">
                             <label htmlFor="email-field">Email</label>
                             <input
                                 type="email"
@@ -86,7 +101,7 @@ const Register = () => {
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group mt-3">
                             <label htmlFor="password-field">Password</label>
                             <input
                                 type="password"
@@ -97,12 +112,11 @@ const Register = () => {
                                 onChange={handleChange}
                             />
                         </div>
-
-                        <div className='form-group'>
-                            <label htmlFor='avatar'>Avatar</label>
-                            <div className='d-flex align-items-center' id='avatar'>
+                        <div className='form-group mt-3'>
+                            <label htmlFor='avatar-field'>Avatar</label>
+                            <div className='d-flex align-items-center' id='avatar-field'>
                                 <div className='me-5'>
-                                    <figure className='avatar me-3'>
+                                    <figure className='avatar'>
                                         <img
                                             src={avatarPreview}
                                             className='rounded-circle'
@@ -110,30 +124,28 @@ const Register = () => {
                                         />
                                     </figure>
                                 </div>
-                                <div className='input-group ms-3'>
+                                <div className='input-group me-0'>
                                     <input
                                         type='file'
                                         name='avatar'
                                         className='form-control'
                                         id='inputGroupFile'
-                                        accept="iamges/*"
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor='inputGroupFile'>
-                                        Choose Avatar
-                                    </label>
+
                                 </div>
                             </div>
                         </div>
-
-                        <button
-                            id="register-button"
-                            type="submit"
-                            className="btn btn-block py-3"
-                            disabled={loading ? true : false}
-                        >
-                            REGISTER
-                        </button>
+                        <div className='d-flex justify-content-center'>
+                            <button
+                                id="register-btn"
+                                type="submit"
+                                className="btn"
+                                disabled={loading ? true : false}
+                            >
+                                Register
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
