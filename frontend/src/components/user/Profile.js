@@ -14,11 +14,8 @@ const Profile = () => {
             {loading ? <Loader /> : (
                 <>
                     <MetaData title="My Profile" />
-                    <div className="row justify-content-around mt-5 user-info">
-                        <div className="col-12 col-md-3">
-                            <div className='d-flex justify-content-center align-items-center'>
-                                <h2>My Profile</h2>
-                            </div>
+                    <div className="row mt-5 justify-content-center user-info">
+                        <div className="col-12 col-md-3 me-5">
                             <div className='d-flex justify-content-center align-items-center'>
                                 <figure className='avatar avatar-profile'>
                                     <img className="rounded-circle img-fluid" src={user.avatar.url} alt='user avatar' />
@@ -38,15 +35,16 @@ const Profile = () => {
                                 <p>{user.email}</p>
                                 <h4>Account created at</h4>
                                 <p>{String(user.createdAt).substring(0, 10)}</p>
-
-                                <button className="btn me-3" id='primary-button'>
-                                    <Link to='/orders/me' style={{ textDecoration: 'none', color: 'black' }}> My orders </Link>
-                                </button>
-                                <button className="btn btn-danger">
-                                    <Link to='/password/update' style={{ textDecoration: 'none', color: 'white' }}>
-                                        Change password
-                                    </Link>
-                                </button>
+                                <div className='d-flex text-nowrap justify-content-start'>
+                                    <button className="btn me-3 block" id='primary-button'>
+                                        <Link to='/orders/me' style={{ textDecoration: 'none', color: 'black' }}> My orders </Link>
+                                    </button>
+                                    <button className="btn btn-danger">
+                                        <Link to='/password/update' style={{ textDecoration: 'none', color: 'white' }}>
+                                            Change password
+                                        </Link>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
