@@ -9,6 +9,9 @@ const UpdateProfile = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const [avatarPreview, setAvatarPreview] = useState('/images/default-avatar.jpg');
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.user);
@@ -20,6 +23,8 @@ const UpdateProfile = () => {
             setFirstName(user.name.split(' ')[0]);
             setLastName(user.name.split(' ')[1]);
             setEmail(user.email);
+            setAvatarPreview(user.avatar.url);
+
         }
         if (isUpdated) {
             alert("Profile successfully updated.");
@@ -36,16 +41,30 @@ const UpdateProfile = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         let name = `${firstName} ${lastName}`;
-        const formData = { name, email }
+        const formData = { name, email, avatar }
         dispatch(updateProfile(formData));
+    }
+
+    // Handles the input change event.
+    const handleChange = (e) => {
+        if (e.target.name === 'avatar') {
+            const reader = new FileReader();
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setAvatarPreview(reader.result);
+                    setAvatar(reader.result);
+                }
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
     }
 
     return (
         <>
             <MetaData title="Update Profile" />
             <div className="row wrapper">
-                <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={handleSubmit} encType='multipart/form-data'>
+                <div className="user-info-div">
+                    <form className="shadow-lg" onSubmit={handleSubmit}>
                         <h2 className="mt-2 mb-5 text-center">Update Profile</h2>
                         <div className="form-group">
                             <label htmlFor="name-field1">First Name</label>
@@ -80,6 +99,32 @@ const UpdateProfile = () => {
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
+
+                        <div className='form-group mt-3'>
+                            <label htmlFor='avatar-field'>Avatar</label>
+                            <div className='d-flex align-items-center' id='avatar-field'>
+                                <div className='me-5'>
+                                    <figure className='avatar'>
+                                        <img
+                                            src={avatarPreview}
+                                            className='rounded-circle'
+                                            alt='Avatar Preview'
+                                        />
+                                    </figure>
+                                </div>
+                                <div className='input-group me-0'>
+                                    <input
+                                        type='file'
+                                        name='avatar'
+                                        className='form-control'
+                                        id='inputGroupFile'
+                                        onChange={handleChange}
+                                    />
+
+                                </div>
+                            </div>
+                        </div>
+
                         <div className='d-flex justify-content-center'>
                             <button
                                 type="submit"
