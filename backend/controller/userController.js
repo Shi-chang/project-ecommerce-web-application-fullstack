@@ -11,24 +11,27 @@ import cloudinary from 'cloudinary';
 
 // Registers a new user (/register).
 export const registerUser = catchAsyncError(async (req, res, next) => {
-    const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        folder: 'avatars',
+    // Sets the user avatar.
+    let defaultAvatarUrl = 'https://icon-library.com/images/free-avatar-icon/free-avatar-icon-11.jpg';
+    let userAvatar = req.body.avatar === undefined ? defaultAvatarUrl : req.body.avatar;
+
+    const result = await cloudinary.v2.uploader.upload(userAvatar, {
+        folder: 'project-all-you-need/avatars',
         width: 150,
         crop: "scale"
     });
 
+    // Sets the user name, email and password.
     const { name, email, password } = req.body;
     // If the user already exists, throw an error.
     let user = await User.findOne({ email });
     if (user) {
         return next(new ErrorHandler('This emails address has already been registered.', 401));
     }
-
     user = await User.create({
         name,
         email,
         password,
-        // This avatar is temporary. I will update it later using third party image management app licke cloudinary.
         avatar: {
             public_id: result.public_id,
             url: result.secure_url
