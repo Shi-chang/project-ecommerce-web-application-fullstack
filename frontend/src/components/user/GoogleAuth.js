@@ -27,12 +27,12 @@ const GoogleAuth = () => {
 
         google.accounts.id.renderButton(
             document.getElementById('buttonDiv'),
-            { theme: "outline", size: "large" }
+            { theme: "outline", width: 260 }
         );
     }, []);
 
     return (
-        <div id='buttonDiv' className='d-flex mt-3 justify-content-center' style={{ width: '100%' }}></div>
+        <div id='buttonDiv' className='mt-4 d-flex justify-content-center'></div>
     )
 }
 
