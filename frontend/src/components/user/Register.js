@@ -64,7 +64,7 @@ const Register = () => {
         <>
             <div className="row wrapper">
                 <MetaData title="Register" />
-                <div className="col-10 col-lg-5">
+                <div className="user-info-div">
                     <form className="shadow-lg" onSubmit={handleSubmit}>
                         <h2 className="mb-3 text-center">Register</h2>
                         <div className="form-group">
