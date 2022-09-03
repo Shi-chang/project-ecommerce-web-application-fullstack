@@ -308,8 +308,12 @@ body {
   font-weight: 700;
 }
 
-#login-content {
+.user-login-div {
   max-width: 24em;
+}
+
+.user-info-div {
+  max-width: 29em;
 }
 
 .wrapper form {
