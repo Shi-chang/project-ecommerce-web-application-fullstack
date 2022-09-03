@@ -48,7 +48,7 @@ const Login = () => {
                 <>
                     <MetaData title={'Log in'} />
                     <div className="row wrapper">
-                        <div id='login-content'>
+                        <div className='user-login-div'>
                             <form className="shadow-lg" onSubmit={handleSumbit}>
                                 <h2 className="mb-3 text-center">Login</h2>
                                 <div className="form-group">
