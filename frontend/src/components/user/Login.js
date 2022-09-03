@@ -48,9 +48,9 @@ const Login = () => {
                 <>
                     <MetaData title={'Log in'} />
                     <div className="row wrapper">
-                        <div className="col-10 col-lg-5">
+                        <div id='login-content'>
                             <form className="shadow-lg" onSubmit={handleSumbit}>
-                                <h1 className="mb-3">Login</h1>
+                                <h2 className="mb-3 text-center">Login</h2>
                                 <div className="form-group">
                                     <label htmlFor="email-field">Email</label>
                                     <input
@@ -74,20 +74,21 @@ const Login = () => {
                                 <>
                                     <GoogleAuth />
                                 </>
-                                <div className="d-flex justify-content-end">
-                                    <Link to="/password/forgot" className="float-right mt-3">Forgot Password?</Link>
-                                </div>
-                                <div className="d-flex justify-content-end">
-                                    <Link to="/register" className="float-right my-3">Register?</Link>
-                                </div>
                                 <div className='d-flex justify-content-center'>
                                     <button
                                         id="login-btn"
                                         type="submit"
-                                        className="mt-3"
+                                        className=" btn mt-3"
                                     >
                                         Login
                                     </button>
+                                </div>
+
+                                <div className="d-flex justify-content-end mt-3">
+                                    <Link to="/password/forgot" className="float-right mt-3">Forgot Password?</Link>
+                                </div>
+                                <div className="d-flex justify-content-end">
+                                    <Link to="/register" className="float-right mt-3">Register?</Link>
                                 </div>
                             </form>
                         </div>
