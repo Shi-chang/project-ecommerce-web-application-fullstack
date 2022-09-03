@@ -75,9 +75,9 @@ const Header = () => {
                                     </button>
 
                                     <div className="dropdown-menu" aria-labelledby="dropDownMenuButton">
-                                        <Link className="dropdown-item" to="/orders/me">My Orders</Link>
-                                        <Link className="dropdown-item" to="/me">My Profile</Link>
-                                        <Link className="dropdown-item text-danger" to="/" onClick={handleLogout}>
+                                        <Link to="/orders/me" className="dropdown-item" >My Orders</Link>
+                                        <Link to="/me" className="dropdown-item" >My Profile</Link>
+                                        <Link to="/" className="dropdown-item text-danger" onClick={handleLogout}>
                                             Logout
                                         </Link>
                                     </div>
