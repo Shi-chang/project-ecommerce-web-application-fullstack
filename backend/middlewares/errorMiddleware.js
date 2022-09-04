@@ -23,37 +23,35 @@ const errorMiddleWare = (err, req, res, next) => {
     // Sets up error response when in production mode.
     if (process.env.NODE_ENV === "PRODUCTION") {
         // Handles invalid mongoose object id errors
+        let message = err.message;
+
         if (err.name === 'CastError') {
-            const message = `Product not found. Invalid ${err.path}`;
-            err.message = new ErrorHandler(message, 400);
+            message = `Product not found. Invalid ${err.path}`;
         }
 
         // Handles mongoose validation errors.
         if (err.name === 'ValidationError') {
-            const message = Object.values(err.errors).map(value => value.message);
-            err.message = new ErrorHandler(message, 400);
+            message = Object.values(err.errors).map(value => value.message);
         }
 
         // Handles mongoose duplicate key error.
         if (err.code === 11000) {
-            const message = `Duplicate ${Object.keys(err.keyValue)}.`;
-            err.message = new ErrorHandler(message, 400);
+            message = `Duplicate ${Object.keys(err.keyValue)}.`;
         }
 
         // Handles invalid JWT error.
         if (err.name === 'JsonWebTokenError') {
-            const message = "Invalid JWT."
-            err.message = new ErrorHandler(message, 400);
+            message = "Invalid JWT.";
         }
 
         // Handles expired JWT error.
         if (err.name === 'TokenExpiredError') {
-            const message = "JWT expired."
-            err.message = new ErrorHandler(message, 400);
+            message = "JWT expired.";
         }
+
         res.status(err.statusCode).json({
             success: false,
-            message: err.message
+            message: message
         });
     }
 }
