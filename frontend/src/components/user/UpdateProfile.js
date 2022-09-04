@@ -10,12 +10,15 @@ const UpdateProfile = () => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [avatar, setAvatar] = useState('');
-    const [avatarPreview, setAvatarPreview] = useState('/images/default-avatar.jpg');
+    const [avatarPreview, setAvatarPreview] = useState('/images/default-avatar.svg');
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.user);
     const { loading, isUpdated, error } = useSelector(state => state.userUpdate);
+
+    const prevName = user.name;
+    const prevEmail = user.email;
 
     // Once the update process is complete, navigate to the /me home page.
     useEffect(() => {
@@ -24,7 +27,6 @@ const UpdateProfile = () => {
             setLastName(user.name.split(' ')[1]);
             setEmail(user.email);
             setAvatarPreview(user.avatar.url);
-
         }
         if (isUpdated) {
             alert("Profile successfully updated.");
@@ -41,6 +43,12 @@ const UpdateProfile = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         let name = `${firstName} ${lastName}`;
+
+        if (prevName === name && prevEmail === email && avatar === '') {
+            alert("You haven't made any change.");
+            return;
+        }
+
         const formData = { name, email, avatar }
         dispatch(updateProfile(formData));
     }
