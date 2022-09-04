@@ -12,8 +12,8 @@ import cloudinary from 'cloudinary';
 // Registers a new user (/register).
 export const registerUser = catchAsyncError(async (req, res, next) => {
     // Sets the user avatar.
-    let defaultAvatarUrl = 'https://icon-library.com/images/free-avatar-icon/free-avatar-icon-11.jpg';
-    let userAvatar = req.body.avatar === undefined ? defaultAvatarUrl : req.body.avatar;
+    let defaultAvatarUrl = 'https://res.cloudinary.com/all-you-need/image/upload/v1662226919/project-all-you-need/default-images/default-avatar_fws1bo.svg';
+    let userAvatar = req.body.avatar === '' ? defaultAvatarUrl : req.body.avatar;
 
     const result = await cloudinary.v2.uploader.upload(userAvatar, {
         folder: 'project-all-you-need/avatars',
@@ -86,7 +86,7 @@ export const logoutUser = catchAsyncErrors(async (req, res, next) => {
 export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-        return next(new ErrorHandler('This email has not registered.', 404));
+        return next(new ErrorHandler('This email address has not registered.', 404));
     }
 
     // Gets a reset token
@@ -94,7 +94,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // Creates url for password resetting
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
     const message = `You are trying to reset your password. Please click the link below to reset your password: \n\n${resetUrl}\n\nIf this is no a request from you, please report to the customer service immediately.`
     try {
         await sendEmail({
@@ -118,6 +118,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     // Hashes url token
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
     const user = await User.findOne({
         resetPasswordToken: resetPasswordToken,
         resetPasswordExpires: { $gt: Date.now() }
@@ -125,20 +126,18 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
     // Handles when the password reset link is expired.
     if (!user) {
-        return next(new ErrorHandler("You password reset link has expired.", 400));
+        return next(new ErrorHandler("Invalid password reset token or expired link.", 400));
     }
-
-    // Handles when the new and confirmed passwords do not match.
-    if (req.body.password != req.body.confirmPassword) {
-        return next(new ErrorHandler("Passwords do not match.", 400));
-    }
-
     // Sets up new password.
     user.password = req.body.password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
-    sendToken(user, 200, res);
+    // sendToken(user, 200, res);
+    res.status(200).json({
+        success: true,
+        message: "Password reset successfully."
+    });
 })
 
 // Updates password for the user (/password/update).
@@ -170,10 +169,30 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
         name: req.body.name,
         email: req.body.email
     }
+    // If the user made a change to the avatar, destroy the previous avatar and create a new iamge
+    // in the cloudinary.
+    if (req.body.avatar !== '') {
+        const user = await User.findById(req.user.id);
+        const imageId = user.avatar.public_id;
+        await cloudinary.v2.uploader.destroy(imageId);
+
+        const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+            folder: 'project-all-you-need/avatars',
+            width: 150,
+            crop: "scale"
+        });
+
+        newUserData.avatar = {
+            public_id: result.public_id,
+            url: result.secure_url
+        };
+    }
+    // Update the user information in the database.
     const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
         new: true,
         runValidators: true
     });
+
     res.status(200).json({
         success: true
     });
