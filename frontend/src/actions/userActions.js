@@ -12,6 +12,7 @@ import {
     loadUserFail,
     logoutUserSuccess
 } from '../reducers/userAuthenticationSlice';
+
 import {
     requestUpdateProfile,
     requestUpdatePassword,
@@ -25,6 +26,21 @@ import {
     updateUserFail,
     clearUserUpdateErrors
 } from '../reducers/userUpdateSlice';
+
+import {
+    requestForgotPassword,
+    forgotPasswordSuccess,
+    forgotPasswordFail,
+    clearForgotPasswordErrors
+} from '../reducers/userForgotPasswordSlice';
+
+import {
+    requestNewPassword,
+    newPasswordSuccess,
+    newPasswordFail,
+    clearResetPasswordErrors
+} from '../reducers/userResetPasswordSlice';
+
 import PORT from '../components/route/routeConstants';
 
 // Logs in user by sending the email and password information to the server. If the user
@@ -115,5 +131,51 @@ export const updateProfile = (userData) => async (dispatch) => {
         dispatch(updateProfileSuccess(data.success));
     } catch (error) {
         dispatch(updateProfileFail(error.response.data.message));
+    }
+}
+
+// Update user password.
+export const updatePassword = (passwords) => async (dispatch) => {
+    try {
+        dispatch(requestUpdatePassword());
+        const config = {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+        }
+        const url = `${PORT}/password/update`;
+        const { data } = await axios.put(url, passwords, config);
+        dispatch(updatePasswordSuccess(data.success));
+    } catch (error) {
+        dispatch(updatePasswordFail(error.response.data.message));
+    }
+}
+
+// Sends forgot password request from the user.
+export const forgotPassword = (email) => async (dispatch) => {
+    try {
+        dispatch(requestForgotPassword());
+        const config = {
+            headers: { 'Content-Type': 'application/json' }
+        }
+        const url = `${PORT}/password/forgot`;
+        const { data } = await axios.post(url, email, config);
+        dispatch(forgotPasswordSuccess(data.message));
+    } catch (error) {
+        dispatch(forgotPasswordFail(error.response.data.message));
+    }
+}
+
+// Sends reset password request from the user.
+export const resetPassword = (token, passwords) => async (dispatch) => {
+    try {
+        dispatch(requestNewPassword());
+        const config = {
+            headers: { 'Content-Type': 'application/json' }
+        }
+        const url = `${PORT}/password/reset/${token}`;
+        const { data } = await axios.put(url, passwords, config);
+        dispatch(newPasswordSuccess(data.message));
+    } catch (error) {
+        dispatch(newPasswordFail(error.response.data.message));
     }
 }
