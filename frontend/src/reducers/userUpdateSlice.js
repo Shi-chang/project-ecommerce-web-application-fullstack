@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+// This component handles the user update operations, including user profile, password.
 
 // The user update reducer and its actions.
 export const userUpdateSlice = createSlice({
