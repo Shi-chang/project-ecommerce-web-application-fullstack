@@ -13,6 +13,9 @@ import { loadUser } from './actions/userActions';
 import store from './store';
 import ProtectedRoute from './components/route/ProtectedRoute';
 import UpdateProfile from './components/user/UpdateProfile';
+import UpdatePassword from './components/user/UpdatePassword';
+import ForgotPassword from './components/user/ForgotPassword';
+import ResetPassword from './components/user/ResetPassword';
 
 // The app component.
 function App() {
@@ -35,18 +38,30 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
 
+
             <Route
               path='/me'
               element={<ProtectedRoute>
                 <Profile />
               </ProtectedRoute>}
             />
+
             <Route
               path='/me/update'
               element={<ProtectedRoute>
                 <UpdateProfile />
               </ProtectedRoute>}
             />
+
+            <Route
+              path='/password/update'
+              element={<ProtectedRoute>
+                <UpdatePassword />
+              </ProtectedRoute>}
+            />
+
+            <Route path='/password/forgot' element={<ForgotPassword />} />
+            <Route path='/password/reset/:token' element={<ResetPassword />} />
 
             <Route path='/cart' element={<Cart />} />
           </Routes>
