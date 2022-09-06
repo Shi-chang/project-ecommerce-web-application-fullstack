@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { addToCart, removeFromCart } from '../reducers/cartSlice.js';
+import { addToCart, removeFromCart, saveShippingInfo } from '../reducers/cartSlice.js';
 import PORT from '../components/route/routeConstants.js';
 
 // Adds an item to the cart.
@@ -24,4 +24,11 @@ export const removeItemFromCart = (id) => async (dispatch, getState) => {
     dispatch(removeFromCart(id));
 
     localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
+}
+
+// Saves an user's shipping information.
+export const saveShippingInformation = (shippingData) => async (dispatch) => {
+    dispatch(saveShippingInfo(shippingData));
+
+    localStorage.setItem('shippingInfo', JSON.stringify(shippingData));
 }
