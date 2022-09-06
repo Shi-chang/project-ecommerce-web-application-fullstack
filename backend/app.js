@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { application } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import productsRoutes from './routes/product.js';
 import userRoutes from './routes/user.js';
 import orderRoutes from './routes/order.js';
+import paymentRoute from './routes/payment.js';
 import errorMiddleWare from './middlewares/errorMiddleware.js';
 import fileUpload from 'express-fileupload';
 import dotenv from 'dotenv';
@@ -32,6 +33,7 @@ app.use(fileUpload());
 // in the front end and back end. But the order fuction is not finished yet in the front end.
 app.use(productsRoutes);
 app.use(userRoutes);
+app.use(paymentRoute);
 app.use(orderRoutes);
 
 if (process.env.NODE_ENV === 'PRODUCTION') {
