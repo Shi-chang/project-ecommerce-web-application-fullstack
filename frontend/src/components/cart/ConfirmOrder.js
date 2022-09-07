@@ -4,6 +4,7 @@ import MetaData from '../layout/MetaData.js';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CheckoutSteps from './CheckoutSteps.js';
+import PayButton from './PayButton.js';
 
 const ConfirmOrder = () => {
     const { cartItems } = useSelector(state => state.cart);
@@ -79,7 +80,8 @@ const ConfirmOrder = () => {
 
                         <hr />
                         <div className='d-flex justify-content-center'>
-                            <button id="primary-button" className="btn btn-primary btn-block" onClick={handleProceedToPayment} >Proceed to Payment</button>
+                            {/* <button id="primary-button" className="btn btn-primary btn-block" onClick={handleProceedToPayment} >Proceed to Payment</button> */}
+                            <PayButton cartItems={cartItems} />
                         </div>
                     </div>
                 </div>
