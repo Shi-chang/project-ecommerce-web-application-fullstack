@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 // payment time, item price, tax price, shipping price, total price, order status, delivery time
 // and order created time.
 const orderSchema = mongoose.Schema({
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User"
     },
     orderItems: [
         {
-            product: {
+            productId: {
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
                 ref: "Product"
