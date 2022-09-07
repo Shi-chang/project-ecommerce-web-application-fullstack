@@ -3,7 +3,6 @@ import User from '../models/user.js';
 import ErrorHandler from '../utils/errorHandler.js';
 import catchAsyncError from '../middlewares/catchAsyncErrors.js';
 import sendToken from '../utils/jwtToken.js';
-import catchAsyncErrors from '../middlewares/catchAsyncErrors.js';
 import sendEmail from '../utils/sendEmails.js';
 import cloudinary from 'cloudinary';
 
@@ -68,7 +67,7 @@ export const loginUser = catchAsyncError(async (req, res, next) => {
 });
 
 // Log out the user (/logout).
-export const logoutUser = catchAsyncErrors(async (req, res, next) => {
+export const logoutUser = catchAsyncError(async (req, res, next) => {
     const options = {
         expires: new Date(Date.now()),
         httpOnly: true,
@@ -83,7 +82,7 @@ export const logoutUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Handles forgot password for the user (/password/forgot).
-export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
+export const forgotPassword = catchAsyncError(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
         return next(new ErrorHandler('This email address has not registered.', 404));
@@ -115,7 +114,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Handles reset password for the user (/password/reset/:token).
-export const resetPassword = catchAsyncErrors(async (req, res, next) => {
+export const resetPassword = catchAsyncError(async (req, res, next) => {
     // Hashes url token
     const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
@@ -141,7 +140,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 })
 
 // Updates password for the user (/password/update).
-export const updatePassword = catchAsyncErrors(async (req, res, next) => {
+export const updatePassword = catchAsyncError(async (req, res, next) => {
     const user = await User.findById(req.user.id).select('+password');
 
     // Checkes if the old password is correct.
@@ -155,7 +154,7 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Gets profile details of currently logged in user (/me).
-export const getUserProfile = catchAsyncErrors(async (req, res, next) => {
+export const getUserProfile = catchAsyncError(async (req, res, next) => {
     const user = await User.findById(req.user.id);
     res.status(200).json({
         success: true,
@@ -164,7 +163,7 @@ export const getUserProfile = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Updates user profile, initiated by the user (/me/update).
-export const updateProfile = catchAsyncErrors(async (req, res, next) => {
+export const updateProfile = catchAsyncError(async (req, res, next) => {
     const newUserData = {
         name: req.body.name,
         email: req.body.email
@@ -199,7 +198,7 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
 })
 
 // Updates user profile, initiated by the admin (/admin/user/:id).
-export const updateUser = catchAsyncErrors(async (req, res, next) => {
+export const updateUser = catchAsyncError(async (req, res, next) => {
     const newUserData = {
         name: req.body.name,
         email: req.body.eamil,
@@ -215,7 +214,7 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Get all users by the admin (/admin/users).
-export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
+export const getAllUsers = catchAsyncError(async (req, res, next) => {
     const users = await User.find();
     res.status(200).json({
         success: true,
@@ -224,7 +223,7 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Get user details by the admin (/admin/user/:id).
-export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
+export const getUserDetails = catchAsyncError(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
     // If the user cannot be found, return an informative error.
@@ -238,7 +237,7 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Delete user by the admin (/admin/user/id).
-export const deleteUser = catchAsyncErrors(async (req, res, next) => {
+export const deleteUser = catchAsyncError(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
     // If the user cannot be found, return an informative error.
