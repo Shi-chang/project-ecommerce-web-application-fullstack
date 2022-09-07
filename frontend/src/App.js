@@ -21,9 +21,7 @@ import ConfirmOrder from './components/cart/ConfirmOrder';
 import axios from 'axios';
 import PORT from './components/route/routeConstants';
 import Payment from './components/cart/Payment';
-
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import CheckoutSuccess from './components/cart/CheckoutSuccess';
 
 // The app component.
 function App() {
@@ -33,23 +31,6 @@ function App() {
   // stored in the browser.
   useEffect(() => {
     store.dispatch(loadUser());
-
-    async function getStripeApiKey() {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      }
-
-      const url = `${PORT}/stripeapikey`;
-
-      const keyData = await axios.get(url, config);
-      console.log(keyData);
-      setStripeApiKey(keyData.data.stripeApiKey);
-    }
-    getStripeApiKey();
-
   }, []);
 
   return (
@@ -73,21 +54,8 @@ function App() {
             <Route path='/cart' element={<Cart />} />
             <Route path='/shipping' element={<ProtectedRoute> <Shipping /></ProtectedRoute>} />
             <Route path='/order/confirm' element={<ProtectedRoute> <ConfirmOrder /> </ProtectedRoute>} />
-            {stripeApiKey &&
-              <Route path='/payment' element={
-                <Elements stripe={loadStripe(stripeApiKey)} >
-                  <Payment />
-                </Elements>
-              } />
-            }
 
-            {/* <Route path='/payment' element={<Payment stripe={loadStripe(stripeApiKey)} />} /> */}
-
-            {/* {stripeApiKey &&
-              <Elements stripe={loadStripe(stripeApiKey)}>
-                <Route path='/payment' element={<ProtectedRoute> <Payment /> </ProtectedRoute>} />
-              </Elements>
-            } */}
+            <Route path='/checkout-success' element={<CheckoutSuccess />} />
 
           </Routes>
         </div>
