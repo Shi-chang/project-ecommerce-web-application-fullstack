@@ -3,9 +3,6 @@ import dotenv from 'dotenv';
 import cloudinary from 'cloudinary';
 import connectDatabase from './config/database.js';
 
-// Sets up .env path.
-dotenv.config({ path: 'backend/config/config.env' })
-
 // connects to the database.
 connectDatabase();
 
