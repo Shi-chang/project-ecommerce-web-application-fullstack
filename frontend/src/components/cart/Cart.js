@@ -4,6 +4,7 @@ import MetaData from '../layout/MetaData.js';
 import { addItemToCart, removeItemFromCart } from '../../actions/cartActions.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import PayButton from './PayButton.js';
 
 // The Cart component that handles CRUD operations of the shopping cart.
 const Cart = () => {
@@ -87,7 +88,9 @@ const Cart = () => {
                                 <p>Subtotal:  <span className="order-summary-values">{cartItems.reduce((accumulator, current) => (accumulator + current.quantity), 0)} (items)</span></p>
                                 <p>Est. total: <span className="order-summary-values">${cartItems.reduce((accumulator, current) => (accumulator + current.price * current.quantity), 0).toFixed(2)}</span></p>
                                 <hr />
-                                <button id="checkout-btn" className="btn btn-block" onClick={handleCheckout}>Check out</button>
+
+                                {/* <button id="checkout-btn" className="btn btn-block" onClick={handleCheckout}>Check out</button> */}
+                                <PayButton cartItems={cartItems} />
                             </div>
                         </div>
                     </div>
@@ -97,4 +100,4 @@ const Cart = () => {
     )
 }
 
-export default Cart
+export default Cart;
