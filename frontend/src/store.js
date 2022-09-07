@@ -6,6 +6,7 @@ import userUpdateReducer from './reducers/userUpdateSlice';
 import userForgotPasswordSlice from './reducers/userForgotPasswordSlice';
 import cartReducer from './reducers/cartSlice.js';
 import userResetPasswordSlice from './reducers/userResetPasswordSlice';
+import orderSlice from './reducers/orderSlice';
 
 // Create a central store that keeps track of the sates of products, details of
 // the product that has been selected, the user, and the shopping cart.
@@ -17,6 +18,7 @@ export default configureStore({
         userUpdate: userUpdateReducer,
         forgotPassword: userForgotPasswordSlice,
         resetPassword: userResetPasswordSlice,
-        cart: cartReducer
+        cart: cartReducer,
+        newOrder: orderSlice
     },
 })
