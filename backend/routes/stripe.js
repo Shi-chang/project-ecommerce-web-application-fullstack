@@ -10,34 +10,55 @@ const router = express.Router();
 const stripe = Stripe(`${process.env.STRIPE_SECRET_KEY}`);
 
 /**
- * The router that handles the checkout process.
+ * The router that handles the checkout process. Only accepts the user ID, product IDs, quantities, 
+ * and image of the products in the shopping cart from the front end request. The price information
+ * for the products comes directly from the server to avoid malicious price manipulations.
  */
 router.post('/create-checkout-session', catchAsyncError(async (req, res, next) => {
     // Retrives the user ID and cart info from the request.
     const userId = req.body.userId;
     const cartInfo = req.body.cartInfo;
-    const line_items = [];
+    // const line_items = [];
 
-    for (const element of cartInfo) {
-        const product = await Product.findById(element.productId);
-        line_items.push({
+    const line_items = await Promise.all(cartInfo.map(async item => {
+        const product = await Product.findById(item.productId);
+        return {
             price_data: {
                 currency: 'usd',
                 product_data: {
                     name: product.name,
-                    images: [element.image],
+                    images: [item.image],
                     metadata: {
-                        productId: element.productId
+                        productId: item.productId
                     }
                 },
                 unit_amount: product.price * 100,
                 tax_behavior: "exclusive",
             },
-            quantity: element.quantity
-        });
-    }
+            quantity: item.quantity
+        }
+    }));
 
-    // Stores the user ID as the metadata in the customer object.
+    // for (const element of cartInfo) {
+    //     const product = await Product.findById(element.productId);
+    //     line_items.push({
+    //         price_data: {
+    //             currency: 'usd',
+    //             product_data: {
+    //                 name: product.name,
+    //                 images: [element.image],
+    //                 metadata: {
+    //                     productId: element.productId
+    //                 }
+    //             },
+    //             unit_amount: product.price * 100,
+    //             tax_behavior: "exclusive",
+    //         },
+    //         quantity: element.quantity
+    //     });
+    // }
+
+    // Stores the user ID int the metadata of the customer object created for the stripe session.
     const customer = await stripe.customers.create({
         metadata: {
             userId
@@ -158,13 +179,11 @@ router.post('/webhook', express.raw({ type: 'application/json' }), catchAsyncErr
                 // Expand the line_items field to include it in the response.
                 expand: ['line_items', 'customer']
             });
-
-
             const orderData = await retrieveData(session);
-
             createOrder(orderData);
     }
-    res.send().end();
+    // res.send().end();
+    res.json({ received: true });
 }));
 
 // Gets the data necessary for the new order.
@@ -172,10 +191,10 @@ const retrieveData = async (session) => {
     const userId = session.customer.metadata.userId;
 
     const orderItems = await Promise.all(session.line_items.data.map(async item => {
+        // Retrieves the product object from Stripe and gets its productId(ID in the local 
+        // database) and image.
         let product = await stripe.products.retrieve(item.price.product);
         const productId = product.metadata.productId;
-
-        product = await Product.findById(productId);
         const image = product.images[0];
 
         return {
@@ -196,7 +215,9 @@ const retrieveData = async (session) => {
     const name = session.customer_details.name;
     const country = session.customer_details.address.country;
     const city = session.customer_details.address.city;
-    const address = session.customer_details.address.line2 ? session.customer_details.address.line1 + session.customer_details.address.line2 : session.customer_details.address.line1;
+    const address = session.customer_details.address.line2 ?
+        session.customer_details.address.line1 + session.customer_details.address.line2
+        : session.customer_details.address.line1;
     const postCode = session.customer_details.address.postal_code;
     const phoneNumber = session.customer_details.phone;
 
