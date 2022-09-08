@@ -1,12 +1,12 @@
 import Product from '../models/product.js';
 import ErrorHandler from '../utils/errorHandler.js';
-import catchAsyncErrors from '../middlewares/catchAsyncErrors.js';
+import catchAsyncError from '../middlewares/catchAsyncError.js';
 import APIFeatures from '../utils/apiFeatures.js';
 
 // This product controller controles the CRUD operations of products.
 
 // Gets all products (/products).
-export const getProducts = catchAsyncErrors(async (req, res, next) => {
+export const getProducts = catchAsyncError(async (req, res, next) => {
     const resPerPage = 8;
     const productsCount = await Product.countDocuments();
 
@@ -29,7 +29,7 @@ export const getProducts = catchAsyncErrors(async (req, res, next) => {
 })
 
 // Gets a single product (/product/:id).
-export const getSingleProduct = catchAsyncErrors(async (req, res, next) => {
+export const getSingleProduct = catchAsyncError(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
     if (!product) {
         return next(new ErrorHandler("Product not found.", 404));
@@ -41,7 +41,7 @@ export const getSingleProduct = catchAsyncErrors(async (req, res, next) => {
 })
 
 // Creates a new product (/admin/product/create).
-export const createProduct = catchAsyncErrors(async (req, res, next) => {
+export const createProduct = catchAsyncError(async (req, res, next) => {
     req.body.user = req.user.id;
     const product = await Product.create(req.body);
     res.status(201).json({
@@ -51,7 +51,7 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
 })
 
 // Updates a product (/admin/product/:id).
-export const updateProduct = catchAsyncErrors(async (req, res, next) => {
+export const updateProduct = catchAsyncError(async (req, res, next) => {
     let product = await Product.findByIdAndUpdate(req.params.id);
     if (!product) {
         return next(new ErrorHandler("Product not found.", 404));
@@ -67,7 +67,7 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Deletes a product (/admin/product/:id).
-export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
+export const deleteProduct = catchAsyncError(async (req, res, next) => {
     let product = await Product.findByIdAndUpdate(req.params.id);
     if (!product) {
         return next(new ErrorHandler("Product not found.", 404));
@@ -80,7 +80,7 @@ export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Creates or updates a product review (/review)
-export const createReview = catchAsyncErrors(async (req, res, next) => {
+export const createReview = catchAsyncError(async (req, res, next) => {
     const { productId, rating, comment } = req.body;
     const review = {
         user: req.user._id,
@@ -113,7 +113,7 @@ export const createReview = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Gets all reviews of a product => (/reviews)
-export const getReviews = catchAsyncErrors(async (req, res, next) => {
+export const getReviews = catchAsyncError(async (req, res, next) => {
     const product = await Product.findById(req.query.id);
     res.status(200).json({
         success: true,
@@ -122,7 +122,7 @@ export const getReviews = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Deletes a product review (/review)
-export const deleteReview = catchAsyncErrors(async (req, res, next) => {
+export const deleteReview = catchAsyncError(async (req, res, next) => {
     const product = await Product.findById(req.query.productId);
 
     // Deletes the review.
