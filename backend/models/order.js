@@ -34,6 +34,10 @@ const orderSchema = mongoose.Schema({
             }
         }
     ],
+    subtotalPrice: {
+        type: Number,
+        required: true
+    },
     taxPrice: {
         type: Number,
         required: true
@@ -47,6 +51,14 @@ const orderSchema = mongoose.Schema({
         required: true
     },
     shippingInfo: {
+        email: {
+            type: String,
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
         country: {
             type: String,
             required: true
@@ -77,11 +89,8 @@ const orderSchema = mongoose.Schema({
         }
     },
     paidAt: {
-        type: Date
-    },
-    itemPrice: {
-        type: Number,
-        required: true
+        type: Date,
+        default: Date.now
     },
     orderStatus: {
         type: String,
@@ -91,10 +100,10 @@ const orderSchema = mongoose.Schema({
     deliveredAt: {
         type: Date
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+    // createdAt: {
+    //     type: Date,
+    //     default: Date.now
+    // }
 });
 
 const Order = mongoose.model('Order', orderSchema);
