@@ -1,42 +1,17 @@
 import Order from '../models/order.js';
 import Product from '../models/product.js';
 import ErrorHandler from '../utils/errorHandler.js';
-import catchAsyncErrors from '../middlewares/catchAsyncErrors.js';
+import catchAsyncError from '../middlewares/catchAsyncError.js';
 
 // This order controller constroles the CRUD operations of orders.
 
-// Creates a new order (/order/create). 
-export const createOrder = catchAsyncErrors(async (req, res, next) => {
-    const {
-        orderItems,
-        shippingInfo,
-        itemPrice,
-        taxPrice,
-        shippingPrice,
-        totalPrice,
-        paymentInfo
-    } = req.body;
-
-    const order = await Order.create({
-        orderItems,
-        shippingInfo,
-        itemPrice,
-        taxPrice,
-        shippingPrice,
-        totalPrice,
-        paymentInfo,
-        paidAt: Date.now(),
-        user: req.user._id
-    });
-
-    res.status(200).json({
-        success: true,
-        order
-    });
-});
+export const createOrder = async (orderData) => {
+    const order = await Order.create(orderData);
+    console.dir(order);
+}
 
 // Gets a single order based on order ID (/order/:id).
-export const getSingleOrder = catchAsyncErrors(async (req, res, next) => {
+export const getSingleOrder = catchAsyncError(async (req, res, next) => {
     const order = await Order.findById(req.params.id).populate("user", "name email");
     if (!order) {
         return next(new ErrorHandler("Cannot find order with this id", 404));
@@ -49,7 +24,7 @@ export const getSingleOrder = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Gets orders of a logged in user (/orders/me).
-export const getMyOrders = catchAsyncErrors(async (req, res, next) => {
+export const getMyOrders = catchAsyncError(async (req, res, next) => {
     const orders = await Order.find({ user: req.user.id });
     if (!orders) {
         return next(new ErrorHandler("This user has no any order.", 404));
@@ -62,7 +37,7 @@ export const getMyOrders = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Gets all orders from all users by the admin (/admin/orders).
-export const getAllOrders = catchAsyncErrors(async (req, res, next) => {
+export const getAllOrders = catchAsyncError(async (req, res, next) => {
     const orders = await Order.find();
     let totalAmount = 0;
     orders.forEach(order => totalAmount += order.totalPrice);
@@ -74,7 +49,7 @@ export const getAllOrders = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Updates and processes order (/admin/order/:id).
-export const updateOrder = catchAsyncErrors(async (req, res, next) => {
+export const updateOrder = catchAsyncError(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
     // If the order is already delivered, then the order cannot be updated.
     if (order.orderStatus === 'Delivered') {
@@ -99,7 +74,7 @@ const updateStock = async (id, quantity) => {
 };
 
 // Deletes an order by the admin (/admin/order/:id).
-export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
+export const deleteOrder = catchAsyncError(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
     if (!order) {
         return next(new ErrorHandler('Order not found.', 400));
