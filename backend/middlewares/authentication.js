@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import ErrorHandler from "../utils/errorHandler.js";
-import catchAsyncErrors from "./catchAsyncErrors.js";
+import catchAsyncError from "./catchAsyncError.js";
 import User from "../models/user.js";
 
 // Check if the user is anthenticated by verifying the token sent by the front end.
-export const isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
+export const isAuthenticatedUser = catchAsyncError(async (req, res, next) => {
     const { token } = req.cookies;
     if (!token) {
         return next(new ErrorHandler("You need to login to access this page.", 401));
