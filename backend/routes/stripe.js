@@ -1,70 +1,52 @@
 import express from 'express';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
-import catchAsyncError from '../middlewares/catchAsyncErrors.js';
+import catchAsyncError from '../middlewares/catchAsyncError.js';
+import { createOrder } from '../controller/orderController.js';
+import Product from '../models/product.js';
 
 dotenv.config();
 const router = express.Router();
 const stripe = Stripe(`${process.env.STRIPE_SECRET_KEY}`);
 
 /**
- * Creates a tax rate, which is to be used for all the products in this project.
- */
-const taxRate = await stripe.taxRates.create({
-    display_name: 'Sales Tax',
-    inclusive: false,
-    percentage: 7.25
-});
-
-/**
  * The router that handles the checkout process.
- * 
- * The following code is constructed with reference to the official documentation of Stripe.The 
- * citation information is as follows:
- * Title: <Stripe>
- * Author: <Stripe>
- * Date: <N.A.>
- * Code version: <"stripe": "^10.7.0">
- * Availability: <https://stripe.com/docs/payments/accept-a-payment?platform=web&ui=checkout>
  */
-router.post('/create-checkout-session', async (req, res) => {
-    // Retrive the user ID and cart info from the request.
+router.post('/create-checkout-session', catchAsyncError(async (req, res, next) => {
+    // Retrives the user ID and cart info from the request.
     const userId = req.body.userId;
-    const cartInfo = req.body.cartItems.map(item => {
-        return {
-            productId: item.product,
-            price: item.price,
-            quantity: item.quantity
-        }
-    });
+    const cartInfo = req.body.cartInfo;
+    const line_items = [];
 
-    // Stores the user ID and cart information as the metadata in the customer object.
-    const customer = await stripe.customers.create({
-        metadata: {
-            userId,
-            cartInfo: JSON.stringify(cartInfo)
-        }
-    });
-
-    const line_items = req.body.cartItems.map(item => {
-        return {
+    for (const element of cartInfo) {
+        const product = await Product.findById(element.productId);
+        line_items.push({
             price_data: {
                 currency: 'usd',
                 product_data: {
-                    name: item.name,
-                    images: [item.image],
+                    name: product.name,
+                    images: [element.image],
                     metadata: {
-                        id: item.id
+                        productId: element.productId
                     }
                 },
-                unit_amount: item.price * 100,
+                unit_amount: product.price * 100,
                 tax_behavior: "exclusive",
             },
-            quantity: item.quantity
+            quantity: element.quantity
+        });
+    }
+
+    // Stores the user ID as the metadata in the customer object.
+    const customer = await stripe.customers.create({
+        metadata: {
+            userId
         }
     });
 
+    // Creates a checkout session for the front end.
     const session = await stripe.checkout.sessions.create({
+        line_items,
         payment_method_types: ['card'],
         shipping_address_collection: {
             allowed_countries: ['US', 'CA'],
@@ -118,21 +100,20 @@ router.post('/create-checkout-session', async (req, res) => {
         customer_update: {
             shipping: "auto"
         },
+        automatic_tax: {
+            enabled: true
+        },
         phone_number_collection: {
             enabled: true
         },
         customer: customer.id,
-        line_items,
-        automatic_tax: {
-            enabled: true
-        },
         mode: 'payment',
         success_url: `${process.env.CLIENT_URL}/checkout-success`,
         cancel_url: `${process.env.CLIENT_URL}/cart`,
     });
-
+    // Sends a session url to the frontend.
     res.send({ url: session.url });
-});
+}));
 
 // Stripe CLI webhook secret for testing the endpoint locally.
 const endpointSecret = `${process.env.STRIPE_WEBHOOK_ENDPOINT_SECRET}`;
@@ -150,35 +131,88 @@ const endpointSecret = `${process.env.STRIPE_WEBHOOK_ENDPOINT_SECRET}`;
  * Code version: <"stripe": "^10.7.0">
  * Availability: <https://stripe.com/docs/webhooks#webhook-endpoint-code>
  */
-router.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
+router.post('/webhook', express.raw({ type: 'application/json' }), catchAsyncError(async (req, res) => {
     // Verifies that the event comes from Stripe.
-    const sig = request.headers['stripe-signature'];
+    const sig = req.headers['stripe-signature'];
     let event;
 
     try {
-        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
+        res.status(400).send(`Webhook Error: ${err.message}`);
         return;
     }
 
-    // Gets the information from the event.
-    const data = event.data.object;
-    const eventType = event.type;
+    // Gets the data from the event.
+    const eventData = event.data.object;
 
-    // Handles the event.
+    // If the payment succeeds, retrieves the checkout session from Stripe, and creates
+    // a new order based on the data from the retrieved checkout session.
     switch (event.type) {
         // This happens when a checkout session is complete.
         case 'checkout.session.completed':
         // This happens when a payment intent using a delayed payment method succeeds.
         case 'checkout.session.async_payment_succeeded':
-            stripe.customers.retrieve(data.customer).
-                then(customer => {
-                    console.log("customer", customer);
-                    console.log("data: ", data);
-                }).catch(error => console.log(error.message));
+            const session = await stripe.checkout.sessions.retrieve(eventData.id, {
+                // The line items purchased by the customer is not included by default.
+                // Expand the line_items field to include it in the response.
+                expand: ['line_items', 'customer']
+            });
+
+
+            const orderData = await retrieveData(session);
+
+            createOrder(orderData);
     }
-    response.send().end();
-});
+    res.send().end();
+}));
+
+// Gets the data necessary for the new order.
+const retrieveData = async (session) => {
+    const userId = session.customer.metadata.userId;
+
+    const orderItems = await Promise.all(session.line_items.data.map(async item => {
+        let product = await stripe.products.retrieve(item.price.product);
+        const productId = product.metadata.productId;
+
+        product = await Product.findById(productId);
+        const image = product.images[0];
+
+        return {
+            productId,
+            image,
+            name: item.description,
+            quantity: item.quantity,
+            price: item.price.unit_amount
+        };
+    }));
+
+    const subtotalPrice = session.amount_subtotal;
+    const taxPrice = session.total_details.amount_tax;
+    const shippingPrice = session.total_details.amount_shipping;
+    const totalPrice = session.amount_total;
+
+    const email = session.customer_details.email;
+    const name = session.customer_details.name;
+    const country = session.customer_details.address.country;
+    const city = session.customer_details.address.city;
+    const address = session.customer_details.address.line2 ? session.customer_details.address.line1 + session.customer_details.address.line2 : session.customer_details.address.line1;
+    const postCode = session.customer_details.address.postal_code;
+    const phoneNumber = session.customer_details.phone;
+
+    const shippingInfo = {
+        email, name, country, city, address, postCode, phoneNumber
+    }
+
+    const id = session.id;
+    const status = session.payment_status;
+    const paymentInfo = {
+        id, status
+    }
+
+    return {
+        userId, orderItems, subtotalPrice, taxPrice, shippingPrice, totalPrice, shippingInfo, paymentInfo
+    }
+}
 
 export default router;
