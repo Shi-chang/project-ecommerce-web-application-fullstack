@@ -1,50 +1,31 @@
-import React, { useEffect } from 'react';
-import MetaData from '../layout/MetaData';
-import CheckoutSteps from './CheckoutSteps';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveShippingInformation } from '../../actions/cartActions';
-import { useNavigate } from 'react-router';
-import PORT from '../route/routeConstants';
-
-import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement, PaymentElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import PORT from '../route/routeConstants';
+import React from 'react';
 
-const options = {
-    style: {
-        base: {
-            fontSize: '14px'
-        },
-        invalid: {
-            color: 'red'
-        }
-    }
-}
-
+/**
+ * The payment component that handles the checkout process. It sends the create-checkout-session
+ * request to the server and gets back a session url that will be used to collect the shipping
+ * information and the payment information.
+ * Along with the reuqest, only the user ID, product IDs, quantities, and image of the products 
+ * in the shopping cart will be sent to the server. The price information for the products will come 
+ * directly from the server to avoid malicious price manipulations.
+ * 
+ * @returns a clickable button that triggers the checkout process
+ */
 const Payment = () => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const navigate = useNavigate();
+    const { cartItems } = useSelector(state => state.cart);
+    const user = useSelector(state => state.user);
 
-    const dispatch = useDispatch();
-    const { user } = useSelector(state => state.user);
-    const { cartItems, shippingInfo } = useSelector(state => state.cart);
+    const cartInfo = cartItems.map(item => {
+        return {
+            productId: item.productId,
+            quantity: item.quantity,
+            image: item.image
+        }
+    });
 
-    useEffect(() => {
-
-    }, []);
-
-    const priceData = JSON.parse(sessionStorage.getItem('priceData'));
-    const paymentData = {
-        amount: Math.round(priceData.totalPrice * 100),
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        document.querySelector('#pay-btn').disabled = true;
-
-        let res;
-
+    const handleCheckout = async () => {
         try {
             const config = {
                 headers: {
@@ -52,98 +33,29 @@ const Payment = () => {
                 },
                 withCredentials: true
             }
+            const url = `${PORT}/stripe/create-checkout-session`;
+            const response = await axios.post(url, {
+                userId: user.user._id,
+                cartInfo
+            }, config);
 
-            const url = `${PORT}/payment/process`;
-
-            const response = await axios.post(url, paymentData, config);
-
-            const clientSecret = response.data.clicentSecret;
-
-            if (!stripe || !elements) {
-                return;
-            }
-
-            const result = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: elements.getElement(CardNumberElement),
-                    billing_details: {
-                        name: user.name,
-                        email: user.email
-                    }
-                }
-            });
-
-            if (result.error) {
-                alert(result.error.message);
-                document.querySelector('pay-but').disabled = false;
-            } else {
-                if (result.paymentIntent.status === 'succeeded') {
-                    navigate('/success');
-                } else {
-                    alert("Something went wrong when processing the payment.");
-                }
+            // If successfully gets back an url, redirects to the session url.
+            if (response.data.url) {
+                window.location.href = response.data.url;
             }
         } catch (error) {
-            document.querySelector('#pay-btn').disabled = false;
+            console.log(error);
             alert(error.response.data.message);
         }
     }
 
     return (
         <>
-            <MetaData title="Payment" />
-            <CheckoutSteps shippingInfo orderConfirmation payment />
-
-            <div className="row wrapper">
-                <div className="user-info-div">
-                    <form className="shadow-lg" onSubmit={handleSubmit}>
-                        <h1 className="mb-4">Card Info</h1>
-                        <div className="form-group">
-                            <label htmlFor="card-number-field">Card Number</label>
-                            <CardNumberElement
-                                type="text"
-                                id="card-number-field"
-                                className="form-control"
-                                options={options}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="card-expiry-field">Card Expiry</label>
-                            <CardExpiryElement
-                                type="text"
-                                id="card-expiry-field"
-                                className="form-control"
-                                options={options}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="card-cvc-field">Card CVC</label>
-                            <CardCvcElement
-                                type="text"
-                                id="card-cvc-field"
-                                className="form-control"
-                                options={options}
-                            />
-                        </div>
-                        <div className='d-flex justify-content-center'>
-
-                            <button
-                                id="pay-btn"
-                                type="submit"
-                                className="btn btn-block"
-                            >
-                                Pay
-                                {` - ${priceData && priceData.totalPrice}`}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+            <div className='d-flex justify-content-center'>
+                <button id="primary-button" onClick={() => handleCheckout()}>Check Out</button>
             </div>
         </>
     )
 }
 
 export default Payment;
-
