@@ -55,6 +55,24 @@ const ProductDetails = () => {
         alert("The product has been added to your cart.");
     }
 
+    const setRatings = () => {
+        const stars = document.querySelectorAll('.star');
+
+        stars.forEach((star, index) => {
+            star.starValue = index + 1;
+
+            ['click', 'mouseover', 'mouseout'].forEach(function (e) {
+                stars.addEventListener(e, showRatings);
+            })
+        });
+
+        function showRatings() {
+            stars.forEach((star, index) => {
+                
+            });
+        }
+    }
+
     return (
         <>
             {loading ? <Loader /> : (
@@ -96,9 +114,15 @@ const ProductDetails = () => {
                             <p>{product.description}</p>
                             <hr />
                             <p id="product_seller mb-3">Sold by: <strong>{product.seller}</strong></p>
-                            <button id="review-btn" type="button" className="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#ratingModal">
+
+                            {user ? <button id="review-btn" type="button" className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#ratingModal" onClick={setRatings}>
                                 Submit My Review
                             </button>
+                                :
+                                <div className="alert alert-danger mt-3">You need to log in to post review.</div>
+
+                            }
+
                             <div className="row mt-2 mb-5">
                                 <div className="rating w-50">
                                     <div className="modal fade" id="ratingModal" tabIndex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
