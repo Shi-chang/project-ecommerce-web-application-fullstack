@@ -10,6 +10,15 @@ import {
 } from '../reducers/productsSlice.js';
 import PORT from '../components/route/routeConstants';
 
+import {
+    requestNewReview,
+    newReviewSuccess,
+    newReviewFail,
+    resetNewReview,
+    clearNewReviewErrors
+} from '../reducers/newReviewSlice.js';
+import axios from 'axios';
+
 // Gets all products.
 export const getProducts = (keyword = '', currentPage = 1, price, category, rating = 0) => async (dispatch) => {
     try {
@@ -43,5 +52,23 @@ export const getProductDetails = (id) => async (dispatch) => {
         }
     } catch (error) {
         dispatch(requestProductDetailsFail(error.message));
+    }
+};
+
+// Gets the details of a product.
+export const newReview = (reviewData) => async (dispatch) => {
+    try {
+        dispatch(requestNewReview());
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+        const url = `${PORT}/order/review`;
+        const { data } = await axios.put(url, reviewData, config);
+        dispatch(newReviewSuccess(data.success));
+    } catch (error) {
+        dispatch(newReviewFail(error.response.data.message));
     }
 };
