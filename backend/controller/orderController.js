@@ -3,16 +3,17 @@ import Product from '../models/product.js';
 import ErrorHandler from '../utils/errorHandler.js';
 import catchAsyncError from '../middlewares/catchAsyncError.js';
 
+
 // This order controller constroles the CRUD operations of orders.
 
+// Creates a new order when the payment is successful.
 export const createOrder = async (orderData) => {
     const order = await Order.create(orderData);
-    console.dir(order);
 }
 
 // Gets a single order based on order ID (/order/:id).
 export const getSingleOrder = catchAsyncError(async (req, res, next) => {
-    const order = await Order.findById(req.params.id).populate("user", "name email");
+    const order = await Order.findById(req.params.id);
     if (!order) {
         return next(new ErrorHandler("Cannot find order with this id", 404));
     }
