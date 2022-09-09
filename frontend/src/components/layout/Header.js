@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -75,7 +75,8 @@ const Header = () => {
                                     </button>
 
                                     <div className="dropdown-menu" aria-labelledby="dropDownMenuButton">
-                                        {user.role !== 'admin' && (<Link to="/orders/me" className="dropdown-item" >My Orders</Link>)}
+                                        {user.role !== 'admin' &&
+                                            (<Link to="/orders/me" className="dropdown-item">My Orders</Link>)}
                                         <Link to="/me" className="dropdown-item" >My Profile</Link>
                                         <Link to="/" className="dropdown-item text-danger" onClick={handleLogout}>
                                             Logout
