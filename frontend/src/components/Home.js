@@ -10,6 +10,7 @@ import Product from './product/Product';
 import Loader from './layout/Loader';
 import 'rc-slider/assets/index.css';
 import { clearProductsErrors } from '../reducers/productsSlice';
+import { myOrders } from '../actions/orderActions.js';
 
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
@@ -25,6 +26,7 @@ const Home = () => {
 
     const dispatch = useDispatch();
     const { loading, products, error, productsCount, filteredProductsCount, resPerPage } = useSelector(state => state.products);
+    const { user } = useSelector(state => state.user);
 
     const params = useParams();
     const keyword = params.keyword;
@@ -48,8 +50,14 @@ const Home = () => {
 
             dispatch(clearProductsErrors());
         }
+
         dispatch(getProducts(keyword, currentPage, price, category, rating));
-    }, [dispatch, error, keyword, currentPage, price, category, rating]);
+
+        if (user) {
+            dispatch(myOrders());
+        }
+
+    }, [user, dispatch, error, keyword, currentPage, price, category, rating]);
 
     function handlePageChange(pageNumber) {
         setCurrentPage(pageNumber);
