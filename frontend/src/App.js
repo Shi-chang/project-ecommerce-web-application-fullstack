@@ -17,6 +17,8 @@ import UpdatePassword from './components/user/UpdatePassword';
 import ForgotPassword from './components/user/ForgotPassword';
 import ResetPassword from './components/user/ResetPassword';
 import CheckoutSuccess from './components/cart/CheckoutSuccess';
+import Orders from './components/order/Orders.js';
+import OrderDetails from './components/order/OrderDetails.js';
 
 // The app component.
 function App() {
@@ -46,8 +48,10 @@ function App() {
 
             <Route path='/cart' element={<Cart />} />
 
-            <Route path='/checkout-success' element={<CheckoutSuccess />} />
+            <Route path='/checkout-success' element={<ProtectedRoute> <CheckoutSuccess /> </ProtectedRoute>} />
 
+            <Route path='/orders/me' element={<ProtectedRoute> <Orders /> </ProtectedRoute>} />
+            <Route path='/order/:id' element={<ProtectedRoute> <OrderDetails /> </ProtectedRoute>} />
           </Routes>
         </div>
         <Footer />
@@ -56,4 +60,6 @@ function App() {
   );
 }
 
+
 export default App;
+
