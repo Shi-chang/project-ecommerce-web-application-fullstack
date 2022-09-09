@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 import productsRoutes from './routes/product.js';
 import userRoutes from './routes/user.js';
 import orderRoutes from './routes/order.js';
-// import paymentRoute from './routes/payment.js';
 import stripeRoute from './routes/stripe.js';
 import errorMiddleWare from './middlewares/errorMiddleware.js';
 import fileUpload from 'express-fileupload';
@@ -25,8 +24,6 @@ app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
-
-console.log(`${process.env.BACKEND_URL}/stripe/webhook`);
 
 // Uses JSON parser and body parser for all non-webhook routes. The reason for this is that the 
 // webhook endpoint (in stripe.js) needs to take the raw request to do signature check. Modifying 
