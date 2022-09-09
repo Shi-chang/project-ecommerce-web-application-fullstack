@@ -1,25 +1,48 @@
 import axios from 'axios';
 import PORT from '../components/route/routeConstants.js';
-
 import {
-    requestCreateOrder,
-    createOrderSuccess,
-    createOrderFail
-} from '../reducers/orderSlice.js';
+    requestLoadOrders,
+    loadOrdersSuccess,
+    loadOrdersFail
+} from '../reducers/ordersSlice.js';
+import {
+    requestOrderDetails,
+    requestOrderDetailsSuccess,
+    requestOrderDetailsFail
+} from '../reducers/orderDetailsSlice.js';
 
-export const createOrder = (order) = async (dispatch, getState) => {
+// Gets the login user's orders.
+export const myOrders = () => async (dispatch) => {
     try {
-        dispatch(requestCreateOrder());
+        dispatch(requestLoadOrders());
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             },
             withCredentials: true
         }
-        const url = `${PORT}/order/new`;
-        const { data } = await axios.post(url, order, config);
-        dispatch(createOrderSuccess(data));
+        const url = `${PORT}/orders/me`;
+        const { data } = await axios.get(url, config);
+        dispatch(loadOrdersSuccess(data.orders));
     } catch (error) {
-        dispatch(createOrderFail(error.response.data.message));
+        dispatch(loadOrdersFail(error.response.data.message));
+    }
+}
+
+// Gets the details of a specified order.
+export const getOrderDetails = (orderId) => async (dispatch) => {
+    try {
+        dispatch(requestOrderDetails());
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+        const url = `${PORT}/order/${orderId}`;
+        const { data } = await axios.get(url, config);
+        dispatch(requestOrderDetailsSuccess(data.order));
+    } catch (error) {
+        dispatch(requestOrderDetailsFail(error.response.data.message));
     }
 }
