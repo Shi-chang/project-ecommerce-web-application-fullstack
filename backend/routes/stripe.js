@@ -39,25 +39,6 @@ router.post('/create-checkout-session', catchAsyncError(async (req, res, next) =
         }
     }));
 
-    // for (const element of cartInfo) {
-    //     const product = await Product.findById(element.productId);
-    //     line_items.push({
-    //         price_data: {
-    //             currency: 'usd',
-    //             product_data: {
-    //                 name: product.name,
-    //                 images: [element.image],
-    //                 metadata: {
-    //                     productId: element.productId
-    //                 }
-    //             },
-    //             unit_amount: product.price * 100,
-    //             tax_behavior: "exclusive",
-    //         },
-    //         quantity: element.quantity
-    //     });
-    // }
-
     // Stores the user ID int the metadata of the customer object created for the stripe session.
     const customer = await stripe.customers.create({
         metadata: {
@@ -186,7 +167,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), catchAsyncErr
     res.json({ received: true });
 }));
 
-// Gets the data necessary for the new order.
+// Gets the data necessary for creating a new order.
 const retrieveData = async (session) => {
     const userId = session.customer.metadata.userId;
 
@@ -232,7 +213,14 @@ const retrieveData = async (session) => {
     }
 
     return {
-        userId, orderItems, subtotalPrice, taxPrice, shippingPrice, totalPrice, shippingInfo, paymentInfo
+        userId,
+        orderItems,
+        subtotalPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+        shippingInfo,
+        paymentInfo
     }
 }
 
