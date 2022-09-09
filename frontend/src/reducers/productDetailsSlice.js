@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // The product details reducer and its actions.
 export const productDetailsSlice = createSlice({
-    name: 'productDetails',
+    name: 'product details',
     initialState: {
         product: {}
     },
@@ -27,5 +27,5 @@ export const { requestProductDetails,
     requestProductDetailsSuccess,
     requestProductDetailsFail,
     clearProductDetailsErrors } = productDetailsSlice.actions;
-    
+
 export default productDetailsSlice.reducer;
