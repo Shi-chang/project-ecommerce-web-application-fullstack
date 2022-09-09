@@ -237,7 +237,7 @@ body {
 
 /* Loader */
 #loader-spinner {
-  height: 700px;
+  height: 300px;
   align-items: center;
 }
 
@@ -517,9 +517,13 @@ body {
   color: grey;
 }
 
+/* Orders */
+.dataTables_wrapper .row {
+  margin-bottom: 1em;
+}
+
 /* Footer */
 footer {
-  margin-top: 8rem;
   color: grey;
   bottom: 0;
   width: 100%;
