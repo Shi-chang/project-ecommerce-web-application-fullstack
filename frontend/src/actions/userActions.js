@@ -11,7 +11,7 @@ import {
     loginUserFail,
     loadUserFail,
     logoutUserSuccess
-} from '../reducers/userAuthenticationSlice';
+} from '../reducers/userInfoSlice';
 
 import {
     requestUpdateProfile,
