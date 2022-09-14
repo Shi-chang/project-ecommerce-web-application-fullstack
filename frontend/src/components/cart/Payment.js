@@ -14,8 +14,8 @@ import React from 'react';
  * @returns a clickable button that triggers the checkout process
  */
 const Payment = () => {
-    const { cartItems } = useSelector(state => state.cart);
-    const user = useSelector(state => state.user);
+    const { cartItems } = useSelector(state => state.userInfo.user);
+    const user = useSelector(state => state.userInfo);
 
     const cartInfo = cartItems.map(item => {
         return {
