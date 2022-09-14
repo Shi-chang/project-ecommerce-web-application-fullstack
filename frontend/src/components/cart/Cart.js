@@ -8,7 +8,8 @@ import Payment from './Payment.js';
 // The Cart component that handles CRUD operations of the shopping cart.
 const Cart = () => {
     const dispatch = useDispatch();
-    const { cartItems } = useSelector(state => state.cart);
+
+    const { cartItems } = useSelector(state => state.userInfo.user);
 
     const increaseQuantity = (productId, quantity, stock) => {
         const newQuantity = quantity + 1;
@@ -77,7 +78,7 @@ const Cart = () => {
                             <div id="order_summary">
                                 <h4>Order Summary</h4>
                                 <hr />
-                                <p>Subtotal:  <span className="order-summary-values">{cartItems.reduce((accumulator, current) => (accumulator + current.quantity), 0)} (items)</span></p>
+                                <p>Subtotal:  <span className="order-summary-values">{cartItems.reduce((accumulator, current) => (accumulator + current.quantity), 0)} pc(s)</span></p>
                                 <p>Est. total: <span className="order-summary-values">${cartItems.reduce((accumulator, current) => (accumulator + current.price * current.quantity), 0).toFixed(2)}</span></p>
                                 <hr />
 
