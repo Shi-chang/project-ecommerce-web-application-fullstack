@@ -55,7 +55,7 @@ export const getProductDetails = (id) => async (dispatch) => {
     }
 };
 
-// Gets the details of a product.
+// Gets reviews of a product.
 export const newReview = (reviewData) => async (dispatch) => {
     try {
         dispatch(requestNewReview());
