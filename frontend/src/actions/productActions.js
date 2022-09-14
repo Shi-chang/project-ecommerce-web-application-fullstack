@@ -65,7 +65,7 @@ export const newReview = (reviewData) => async (dispatch) => {
             },
             withCredentials: true
         }
-        const url = `${PORT}/order/review`;
+        const url = `${PORT}/review`;
         const { data } = await axios.put(url, reviewData, config);
         dispatch(newReviewSuccess(data.success));
     } catch (error) {
