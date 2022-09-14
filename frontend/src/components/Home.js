@@ -26,7 +26,7 @@ const Home = () => {
 
     const dispatch = useDispatch();
     const { loading, products, error, productsCount, filteredProductsCount, resPerPage } = useSelector(state => state.products);
-    const { user } = useSelector(state => state.user);
+    const { user } = useSelector(state => state.userInfo);
 
     const params = useParams();
     const keyword = params.keyword;
