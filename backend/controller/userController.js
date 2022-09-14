@@ -5,6 +5,7 @@ import catchAsyncError from '../middlewares/catchAsyncError.js';
 import sendToken from '../utils/jwtToken.js';
 import sendEmail from '../utils/sendEmails.js';
 import cloudinary from 'cloudinary';
+import Product from '../models/product.js';
 
 // This user controller controles the CRUD operations of users.
 
@@ -193,6 +194,22 @@ export const updateProfile = catchAsyncError(async (req, res, next) => {
     });
 
     res.status(200).json({
+        success: true
+    });
+})
+
+// Updates the user's cart items (/cart/update).
+export const updateCart = catchAsyncError(async (req, res, next) => {
+    const cartItems = req.body;
+    console.log(cartItems);
+
+    const user = await User.findByIdAndUpdate(req.user.id, { cartItems: cartItems }, {
+        new: true,
+        runValidators: true
+    });
+
+    res.status(200).json({
+        user,
         success: true
     });
 })
