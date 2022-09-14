@@ -8,6 +8,7 @@ import {
     getUserProfile,
     updatePassword,
     updateProfile,
+    updateCart,
     getAllUsers,
     getUserDetails,
     updateUser,
@@ -25,6 +26,7 @@ router.route('/password/reset/:token').put(resetPassword);
 router.route('/password/update').put(isAuthenticatedUser, updatePassword);
 router.route('/me').get(isAuthenticatedUser, getUserProfile);
 router.route('/me/update').put(isAuthenticatedUser, updateProfile);
+router.route('/cart/update').put(isAuthenticatedUser, updateCart);
 router.route('/admin/users').get(isAuthenticatedUser, authorizedRoles('admin'), getAllUsers);
 router.route('/admin/user/:id')
     .get(isAuthenticatedUser, authorizedRoles('admin'), getUserDetails)
