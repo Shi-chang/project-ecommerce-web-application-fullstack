@@ -10,4 +10,4 @@ This project is an eCommerce website application for online shopping. It allows 
 6. How to implement a secure password recovery process for users with Mailtrap and Nodemailer.
 
 # Acknowledgements
-I would like to thank the instructor of the course, Ghulam Abbas, for providing this comprehensive course in a clear way, and his quick response to questions.
+I would like to thank the instructor of the course, Ghulam Abbas from Udemy, for providing this comprehensive course in a clear way, and his quick response to questions.
