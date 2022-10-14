@@ -1,5 +1,5 @@
 # Overview
-This project is an eCommerce website application for online shopping. that allows users to create and update accounts, place orders and pay for their items with credit cards.
+This project is an eCommerce website application for online shopping. It allows users to create and update accounts, place orders and pay for their items with credit cards.
 
 # What I have learned
 1. How to build an interactive frontend with HTML/CSS/JavaScript, Bootstrap, React, and Redux Toolkit.
